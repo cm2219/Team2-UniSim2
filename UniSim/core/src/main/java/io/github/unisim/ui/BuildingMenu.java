@@ -85,6 +85,16 @@ public class BuildingMenu {
         BuildingType.SLEEPING,
         "Student Accomodation"
     ));
+    buildings.add(new Building(
+        new Texture(Gdx.files.internal("buildings/swimmingPool.png")),
+        0.0025f,
+        new Vector2(1f, -2.4f),
+        new Point(),
+        new Point(6, 9),
+        false,
+        BuildingType.RECREATION,
+        "Swimming Pool"
+    ));
 
     table = new Table();
     // Add buldings to the table
