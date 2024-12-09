@@ -39,14 +39,21 @@ public class InfoBar {
   private Cell<Table> buildingCountersTableCell;
   private Cell[] buildingCounterCells;
   private World world;
+  //Implement Money
+  private Label balanceLabel = new Label(this.currentBalance.getBalance(), skin);
+  private Texture moneyTexture = new Texture("ui/money.png");
+  private Image moneyIcon = new Image(moneyTexture);
+  private Cell<Label> balanceCell;
+  private Cell<Image> moneyIconCell;
   /**
    * Create a new infoBar and draws its' components onto the provided stage.
 
    * @param stage - The stage on which to draw the InfoBar.
    */
-  public InfoBar(Stage stage, Timer timer, World world) {
+  public InfoBar(Stage stage, Timer timer, World world, PlayerBalance currentBalance) {
     this.timer = timer;
     this.world = world;
+    this.currentBalance = currentBalance;
     buildingCounterCells = new Cell[4];
 
     // Building counter table
@@ -65,6 +72,10 @@ public class InfoBar {
     pauseButtonCell = infoTable.add(playImage).align(Align.center);
     timerLabelCell = infoTable.add(timerLabel).align(Align.center);
     scoreLabelCell = infoTable.add(scoreLabel).align(Align.center);
+    //implement money:
+    moneyIconCell = infoTable.add(moneyIcon).align(Align.center);
+    balanceCell = infoTable.add(balanceLabel).align(Align.center);
+    
     buildingCountersTableCell = infoTable.add(buildingCountersTable).expandX().align(Align.right);
 
     // Pause button
@@ -107,6 +118,8 @@ public class InfoBar {
     buildingCounterLabels[3].setText("Sleeping: "
         + Integer.toString(world.getBuildingCount(BuildingType.SLEEPING)));
     pauseButtonCell.setActor(GameState.paused ? playImage : pauseImage);
+    //Implement Money
+    balanceLabel.settext(Integer.toString(this.currentBalance.getBalance()));
   }
 
   /**
@@ -119,6 +132,8 @@ public class InfoBar {
     bar.setBounds(0, height * 0.95f, width, height * 0.05f);
     infoTable.setBounds(0, height * 0.95f, width, height * 0.05f);
     titleTable.setBounds(0, height * 0.95f, width, height * 0.05f);
+    //Implement Money
+    
 
     float counterTableWidth = height * 0.27f;
     buildingCountersTableCell.width(counterTableWidth).height(height * 0.05f);
@@ -137,6 +152,13 @@ public class InfoBar {
     .padLeft(height * 0.01f).padRight(height * 0.01f);
 
     titleLabel.setFontScale(height * 0.003f);
+
+    //Implement Money
+    balanceLabel.setFontScale(height * 0.27f);
+    balanceCell.width(height * 0.08f).height(height * 0.05f);
+    balanceCell.padLeft(height * 0.05f)
+    moneyIconCell.width(height * 0.03f).height(height * 0.03f)
+    .padLeft(height * 0.01f).padRight(height * 0.01f);
   }
 
   public void reset() {
