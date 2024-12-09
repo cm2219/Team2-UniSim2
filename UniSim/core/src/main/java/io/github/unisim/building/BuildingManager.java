@@ -37,6 +37,11 @@ public class BuildingManager {
    */
   public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer) {
     boolean buildable = true;
+    //check if user has enough money to build the selected building.
+    Integer userBalance = Integer.valueOf(this.currentBalance.getBalance());
+    if (userBalance) < buildCost){
+      buildable = false;
+    }
     // we iterate over each tile within the search region and check
     // for any non-buildable tiles.
     for (int x = btmLeft.x; x <= topRight.x && buildable; x++) {
