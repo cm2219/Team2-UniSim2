@@ -18,8 +18,9 @@ public class PlayerBalance {
   /* Return current balance as an integer.
   * @return - balance in integer form
   */
-  public int getBalance(){
-    return this.balance;
+  public String getBalance(){
+    String balance = String.valueOf(this.balance);
+    return balance;
   }
 
   /*Update balance
