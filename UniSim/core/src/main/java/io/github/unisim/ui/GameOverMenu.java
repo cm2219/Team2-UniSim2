@@ -8,13 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.unisim.GameState;
+
 import java.util.List;
 
 /**
  * Menu displayed when the game timer runs out.
+ * - Allows the player to input their name.
  * - Saves the player's final score to the leaderboard.
  * - Displays the top 5 scores.
  */
@@ -23,19 +26,24 @@ public class GameOverMenu {
     private Skin skin;                        
     private ShapeActor bar = new ShapeActor(GameState.UISecondaryColour);
     private Table table;                      
+    private TextButton saveScoreButton;       
     private TextButton mainMenuButton;        
     private Label topScoresLabel;             
+    private Label instructionLabel;           
+    private TextField nameInputField;         // Text field for player name input
     private Cell<TextButton> buttonCell;
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
     private LeaderboardManager leaderboardManager; // Manages leaderboard operations.
+    private int finalScore;                  // Player's final score
 
     /**
-     * Creates a new GameOverMenu, saves the final score, and displays the leaderboard.
+     * Creates a new GameOverMenu, allowing the player to input their name and view the leaderboard.
      *
      * @param finalScore The player's final score to save.
      */
     public GameOverMenu(int finalScore) {
+        this.finalScore = finalScore;
         stage = new Stage(new ScreenViewport());
         table = new Table();
         skin = GameState.defaultSkin;
@@ -43,15 +51,31 @@ public class GameOverMenu {
         // Initialize the LeaderboardManager
         leaderboardManager = LeaderboardManager.getInstance();
 
-        // Save the final score to the leaderboard
-        String playerName = "PLACEHOLDER"; // TODO: Replace with actual player input for name
-        leaderboardManager.saveScore(finalScore, playerName);
+        // Instruction label
+        instructionLabel = new Label("Enter your name to save your score:", skin);
 
-        // Retrieve the top 5 scores and format them into a string
-        String topScoresText = getFormattedTopScores();
+        // Text field for player name input
+        nameInputField = new TextField("", skin);
+        nameInputField.setMessageText("Your Name"); // Placeholder text
+
+        // Button to save the score
+        saveScoreButton = new TextButton("Save Score", skin);
+        saveScoreButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                String playerName = nameInputField.getText().trim();
+                if (!playerName.isEmpty()) {
+                    leaderboardManager.saveScore(finalScore, playerName);
+                    updateLeaderboardDisplay();
+                    instructionLabel.setText("Score saved!"); // Feedback to player
+                } else {
+                    instructionLabel.setText("Name cannot be empty. Try again.");
+                }
+            }
+        });
 
         // Label to display the leaderboard
-        topScoresLabel = new Label("Top 5 Scores:\n" + topScoresText, skin);
+        topScoresLabel = new Label("Top 5 Scores:\n", skin);
 
         // Return to Main Menu button
         mainMenuButton = new TextButton("Return to Main Menu", skin);
@@ -70,6 +94,12 @@ public class GameOverMenu {
         table.row();
         table.add(new Label("Your Final Score: " + finalScore, skin)).padBottom(20);
         table.row();
+        table.add(instructionLabel).padBottom(10);
+        table.row();
+        table.add(nameInputField).width(300).padBottom(20);
+        table.row();
+        table.add(saveScoreButton).width(200).height(50).padBottom(20);
+        table.row();
         table.add(topScoresLabel).padBottom(20);
         table.row();
         buttonCell = table.add(mainMenuButton).width(200).height(60);
@@ -81,22 +111,23 @@ public class GameOverMenu {
         // Input processors for handling user interaction
         inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
         inputMultiplexer.addProcessor(stage);
+
+        // Initial display of the leaderboard
+        updateLeaderboardDisplay();
     }
 
     /**
-     * Retrieves and formats the top 5 scores for display.
-     *
-     * @return A string containing the formatted top scores.
+     * Updates the leaderboard display with the latest top scores.
      */
-    private String getFormattedTopScores() {
-        StringBuilder formattedScores = new StringBuilder();
+    private void updateLeaderboardDisplay() {
+        StringBuilder formattedScores = new StringBuilder("Top 5 Scores:\n");
         List<String> topScores = leaderboardManager.getTopScores();
 
         for (String score : topScores) {
             formattedScores.append(score).append("\n");
         }
 
-        return formattedScores.toString();
+        topScoresLabel.setText(formattedScores.toString());
     }
 
     /**
