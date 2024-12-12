@@ -31,6 +31,7 @@ public class BuildingMenu {
   private Table table;
   private ArrayList<Building> buildings = new ArrayList<>();
   private ArrayList<Image> buildingImages = new ArrayList<>();
+  private ArrayList<String> buildingCosts = new ArrayList<>();
   private Label buildingInfoLabel = new Label(
       "", new Skin(Gdx.files.internal("ui/uiskin.json"))
   );
@@ -126,6 +127,14 @@ public class BuildingMenu {
       });
       table.add(buildingImages.get(i));
     }
+    //New table row for the price of each building.
+    table.row();
+    for (int = 0; i < buildings.sizt(); i++){
+      String cost = String.valueOf(buildings.get(i).buildCost));
+      String costText = "$" + cost;
+      buildingCostLabels[i] = new Label(cost, skin);
+      table.add(buildingCostLabels.get(i));
+      table.add(costText);
 
     buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
 
@@ -142,9 +151,9 @@ public class BuildingMenu {
    */
   @SuppressWarnings("unchecked")
   public void resize(int width, int height) {
-    table.setBounds(0, 0, width, height * 0.1f);
-    bar.setBounds(0, 0, width, height * 0.1f);
-    buildingInfoTable.setBounds(0, height * 0.1f, width, height * 0.025f);
+    table.setBounds(0, 0, width, height * 0.2f); //old val: 0.01f
+    bar.setBounds(0, 0, width, height * 0.2f); //old val: 0.01f
+    buildingInfoTable.setBounds(0, height * 0.2f, width, height * 0.05f); //old val: 0.1f, 0.05f
 
     // we must perform an unchecked type conversion here
     // this is acceptable as we know our table only contains instances of Actors
@@ -169,6 +178,7 @@ public class BuildingMenu {
       buildingInfoLabel.setText("Game Over!");
     } else if (world.selectedBuilding == null) {
       buildingInfoLabel.setText("");
+      
     }
   }
 
