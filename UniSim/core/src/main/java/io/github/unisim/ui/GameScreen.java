@@ -15,6 +15,7 @@ import io.github.unisim.world.WorldInputProcessor;
 /**
  * Game screen where the main game is rendered and controlled.
  * Supports pausing the game with a pause menu.
+ *Should display game over menu when time is up.
  */
 public class GameScreen implements Screen {
   private World world = new World();
@@ -26,6 +27,8 @@ public class GameScreen implements Screen {
   private InputProcessor worldInputProcessor = new WorldInputProcessor(world);
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameOverMenu gameOverMenu = new GameOverMenu();
+    
+  private boolean gameOver = false;
 
   /**
    * Constructor for the GameScreen.
@@ -65,6 +68,18 @@ public class GameScreen implements Screen {
       gameOverMenu.render(delta);
     }
   }
+    /**
+     * Calculates the player's final satisfaction score based on game state.
+     *
+     * @return The calculated satisfaction score.
+     */
+   /** private int calculateSatisfactionScore() {
+     *   // Placeholder TODO: Generate score
+     *   // TODO: Replace with actual score calculation based on buildings, performance, etc.
+     *   return value;
+    }
+    */
+
 
   @Override
   public void resize(int width, int height) {
