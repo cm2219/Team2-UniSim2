@@ -105,9 +105,18 @@ public class BuildingMenu {
     table = new Table();
     // Add buldings to the table
     for (int i = 0; i < buildings.size(); i++) {
-      buildingImages.add(new Image(buildings.get(i).texture));
       final int buildingIndex = i;
-      buildingImages.get(i).addListener(new ClickListener() {
+      Building building = buildsings.get(i);
+
+      //Name row
+      table.row();
+      Label nameLabel = new Label(building.name, new Skin(Gdx.files.internal("ui/uiskin.json")));
+      table.add(nameLabel).pad(10).align(Align.center);
+
+      //Image row
+      Image buildingImage = new Image(building.texture);
+      buildingImages.add(buildingImage);
+      buildingImages.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent e, float x, float y) {
           if (world.selectedBuilding == buildings.get(buildingIndex)) {
@@ -125,16 +134,13 @@ public class BuildingMenu {
           }
         }
       });
-      table.add(buildingImages.get(i));
+      table.row();
+      table.add(buildingImage).pad(10).align(Align.center);
     }
-    //New table row for the price of each building.
+    //Build cost row
+    Label buildCostLabel = new Label("$ " + building.buildCost, new Skin(Gdx.files.internal("ui/uiskin.json")));
     table.row();
-    for (int = 0; i < buildings.sizt(); i++){
-      String cost = String.valueOf(buildings.get(i).buildCost));
-      String costText = "$" + cost;
-      buildingCostLabels[i] = new Label(cost, skin);
-      table.add(buildingCostLabels.get(i));
-      table.add(costText);
+    table.add(buildCostLabel).pad(10).align(Align.center);
 
     buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
 
