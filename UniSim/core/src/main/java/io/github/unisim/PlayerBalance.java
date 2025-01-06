@@ -26,7 +26,8 @@ public class PlayerBalance {
   */
   public void updateBalance(int changeAmt) {
     this.balance += changeAmt;
-    if balance <= 0 {
+    if (balance <= 0) {
       this.isZero = true;
     }
   }
+}

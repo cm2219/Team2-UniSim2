@@ -1,4 +1,5 @@
 package io.github.unisim.ui;
+import io.github.unisim.Leaderboard;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -34,7 +35,7 @@ public class GameOverMenu {
     private Cell<TextButton> buttonCell;
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
-    private LeaderboardManager leaderboardManager; // Manages leaderboard operations.
+    private Leaderboard leaderboard; // Manages leaderboard operations.
     private int finalScore;                  // Player's final score
 
     /**
@@ -42,14 +43,14 @@ public class GameOverMenu {
      *
      * @param finalScore The player's final score to save.
      */
-    public GameOverMenu(int finalScore) {
-        this.finalScore = finalScore;
+    public GameOverMenu() {
+        this.finalScore = 0; //placeholder
         stage = new Stage(new ScreenViewport());
         table = new Table();
         skin = GameState.defaultSkin;
 
         // Initialize the LeaderboardManager
-        leaderboardManager = LeaderboardManager.getInstance();
+        leaderboard = Leaderboard.getInstance();
 
         // Instruction label
         instructionLabel = new Label("Enter your name to save your score:", skin);
@@ -65,7 +66,8 @@ public class GameOverMenu {
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 String playerName = nameInputField.getText().trim();
                 if (!playerName.isEmpty()) {
-                    leaderboardManager.saveScore(finalScore, playerName);
+                    leaderboard.updateScores(finalScore, playerName);
+                    leaderboard.toCsvFile();
                     updateLeaderboardDisplay();
                     instructionLabel.setText("Score saved!"); // Feedback to player
                 } else {
@@ -121,7 +123,7 @@ public class GameOverMenu {
      */
     private void updateLeaderboardDisplay() {
         StringBuilder formattedScores = new StringBuilder("Top 5 Scores:\n");
-        List<String> topScores = leaderboardManager.getTopScores();
+        List<String> topScores = leaderboard.getFormattedTopScores();
 
         for (String score : topScores) {
             formattedScores.append(score).append("\n");

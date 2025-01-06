@@ -1,17 +1,29 @@
+package io.github.unisim;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
+import java.util.List;
 
 public class Leaderboard {
+    private static Leaderboard instance;
     private TreeMap<Integer, String> sortedScores;
 
     // Constructor
     public Leaderboard() {
         this.sortedScores = new TreeMap<>(Collections.reverseOrder()); // Descending order of scores
+    }
+
+//for isntance access
+    public static Leaderboard getInstance(){
+        if (instance == null){
+            instance = new Leaderboard();
+        }
+        return instance;
     }
 
     // Load leaderboard from a CSV file
@@ -114,6 +126,18 @@ public class Leaderboard {
         }
     }
 
+
+    //getter method for gameover stuffs
+    public List<String> getFormattedTopScores(){
+        List<String> formattedScores = new ArrayList<>();
+        int rank = 1;
+
+        for (var entry : sortedScores.entrySet()){
+         formattedScores.add(rank + ". " + entry.getValue() + " - " + entry.getKey());
+        rank++;   
+        }
+        return formattedScores;
+    }
     /*
      * // Main method for testing
      * public static void main(String[] args) {
