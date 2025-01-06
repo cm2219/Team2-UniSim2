@@ -28,7 +28,7 @@ public class GameScreen implements Screen {
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameOverMenu gameOverMenu = new GameOverMenu();
     
-  private boolean gameOver = false;
+  //private boolean gameOver = false;
 
   /**
    * Constructor for the GameScreen.
@@ -68,17 +68,7 @@ public class GameScreen implements Screen {
       gameOverMenu.render(delta);
     }
   }
-    /**
-     * Calculates the player's final satisfaction score based on game state.
-     *
-     * @return The calculated satisfaction score.
-     */
-   /** private int calculateSatisfactionScore() {
-     *   // Placeholder TODO: Generate score
-     *   // TODO: Replace with actual score calculation based on buildings, performance, etc.
-     *   return value;
-    }
-    */
+    
 
 
   @Override
