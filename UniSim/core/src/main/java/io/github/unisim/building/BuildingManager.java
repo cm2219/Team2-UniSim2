@@ -1,225 +1,166 @@
-package io.github.unisim.building;
+package io.github.unisim.ui;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import io.github.unisim.GameState;
 import io.github.unisim.Point;
+import io.github.unisim.building.Building;
+import io.github.unisim.building.BuildingType;
+import io.github.unisim.world.World;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Manage the buildings placed in the world and methods common to all buildings.
+ * Menu used to place buildings in the world by clicking and dragging them
+ * from the list onto the map.
  */
-public class BuildingManager {
-  // create a list of buildings which will be sorted by a height metric derived from
-  // the locations of the corners of the buildings.
+@SuppressWarnings({"MemberName", "AbbreviationAsWordInName"})
+public class BuildingMenu {
+  private World world;
+  private ShapeActor bar = new ShapeActor(GameState.UISecondaryColour);
+  private Table table;
   private ArrayList<Building> buildings = new ArrayList<>();
-  private Map<BuildingType, Integer> buildingCounts = new HashMap<>();
-  private Matrix4 isoTransform;
-  private Building previewBuilding;
-
-  public BuildingManager(Matrix4 isoTransform) {
-    this.isoTransform = isoTransform;
-  }
+  private ArrayList<Image> buildingImages = new ArrayList<>();
+  private Label buildingInfoLabel = new Label(
+      "", new Skin(Gdx.files.internal("ui/uiskin.json"))
+  );
+  private Table buildingInfoTable = new Table();
 
   /**
-   * Determines if a region on the map is composed solely of buildable tiles.
+   * Create a Building Menu and attach its actors and components to the provided stage.
+   * Also handles drawing buildings and their flipped variants
 
-   * @param btmLeft - The co-ordinates of the bottom left corner of the search region
-   * @param topRight - The co-ordinates of the top right corner of the search region
-   * @param tileLayer - A reference to the map layer containing all terrain tiles
-   * @return - true if the region is made solely of buildable tiles, false otherwise
+   * @param stage - The stage on which to draw the menu.
    */
-  public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer) {
-    boolean buildable = true;
-    // we iterate over each tile within the search region and check
-    // for any non-buildable tiles.
-    for (int x = btmLeft.x; x <= topRight.x && buildable; x++) {
-      for (int y = btmLeft.y; y <= topRight.y && buildable; y++) {
-        Cell currentCell = tileLayer.getCell(x, y);
-        if (currentCell == null) {
-          buildable = false;
-          continue;
+  public BuildingMenu(Stage stage, World world) {
+    this.world = world;
+    // Set building images and sizes
+    buildings.add(new Building(
+        new Texture(Gdx.files.internal("buildings/restaurant.png")),
+        0.01f,
+        new Vector2(0.35f, -0.9f),
+        new Point(),
+        new Point(3, 3),
+        false,
+        BuildingType.EATING,
+        "Canteen"
+    ));
+    buildings.add(new Building(
+        new Texture(Gdx.files.internal("buildings/library.png")),
+        0.0075f,
+        new Vector2(1.8f, -4.6f),
+        new Point(),
+        new Point(20, 12),
+        false,
+        BuildingType.LEARNING,
+        "Library"
+    ));
+    buildings.add(new Building(
+        new Texture(Gdx.files.internal("buildings/basketballCourt.png")),
+        0.0025f,
+        new Vector2(1f, -2.4f),
+        new Point(),
+        new Point(6, 9),
+        false,
+        BuildingType.RECREATION,
+        "Basketball Court"
+    ));
+    buildings.add(new Building(
+        new Texture(Gdx.files.internal("buildings/studentHousing.png")),
+        0.108f,
+        new Vector2(1.4f, -2.8f),
+        new Point(),
+        new Point(11, 11),
+        false,
+        BuildingType.SLEEPING,
+        "Student Accomodation"
+    ));
+
+    table = new Table();
+    // Add buldings to the table
+    for (int i = 0; i < buildings.size(); i++) {
+      buildingImages.add(new Image(buildings.get(i).texture));
+      final int buildingIndex = i;
+      buildingImages.get(i).addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent e, float x, float y) {
+          if (GameState.paused) {
+                return;
+          }
+          if (world.selectedBuilding == buildings.get(buildingIndex)) {
+            world.selectedBuilding = null;
+          } else {
+            world.selectedBuilding = buildings.get(buildingIndex);
+            buildingInfoLabel.setText(world.selectedBuilding.name + " - Press 'R' to rotate");
+            if (world.selectedBuilding.flipped) {
+              world.selectedBuilding.flipped = false;
+              int temp = world.selectedBuilding.size.x;
+              world.selectedBuilding.size.x = world.selectedBuilding.size.y;
+              world.selectedBuilding.size.y = temp;
+              world.selectedBuildingUpdated = true;
+            }
+          }
         }
-
-        TiledMapTile currentTile = currentCell.getTile();
-        if (!tileBuildable(currentTile)) {
-          buildable = false;
-        }
-      }
-    }
-    if (!buildable) {
-      return false;
+      });
+      table.add(buildingImages.get(i));
     }
 
-    // Next, iterate over the current buildings to see if any intersect the new building
-    for (Building building : buildings) {
-      // Use the seperating axis theorem to detect building overlap
-      if (!(building.location.x > topRight.x
-          || building.location.x + building.size.x - 1 < btmLeft.x
-          || building.location.y > topRight.y
-          || building.location.y + building.size.y - 1 < btmLeft.y)
-      ) {
-        if (building == previewBuilding) {
-          continue;
-        }
-        buildable = false;
-        break;
-      }
-    }
+    buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
 
-    return buildable;
+    stage.addActor(bar);
+    stage.addActor(table);
+    stage.addActor(buildingInfoTable);
   }
 
   /**
-   * Helper method that determines if the provided tile may be built on.
+   * Called when the window is resized, scales the building menu images with the window size.
 
-   * @param tile - A reference to a tile on the terrain layer of the map.
-   * @return - true if the tile is buildable, false otherwise
+   * @param width - The new width of the window in pixels
+   * @param height - The new height of the window in pixels
    */
-  private static boolean tileBuildable(TiledMapTile tile) {
-    return GameState.buildableTiles.contains(tile.getId());
+  @SuppressWarnings("unchecked")
+  public void resize(int width, int height) {
+    table.setBounds(0, 0, width, height * 0.1f);
+    bar.setBounds(0, 0, width, height * 0.1f);
+    buildingInfoTable.setBounds(0, height * 0.1f, width, height * 0.025f);
+
+    // we must perform an unchecked type conversion here
+    // this is acceptable as we know our table only contains instances of Actors
+    for (Cell<Actor> cell : table.getCells()) {
+      Image buildingImage = (Image) (cell.getActor());
+      Vector2 textureSize = new Vector2(buildingImage.getWidth(), buildingImage.getHeight());
+      cell.width(
+          height * 0.1f * (textureSize.x < textureSize.y ? textureSize.x / textureSize.y : 1)
+      ).height(
+          height * 0.1f * (textureSize.y < textureSize.x ? textureSize.y / textureSize.x : 1)
+      );
+    }
+
+    buildingInfoLabel.setFontScale(height * 0.0015f);
   }
 
   /**
-   * Draws each building from the building list onto the map.
-
-   * @param batch - the SpriteBatch in which to draw
+   * Called when the building menu needs to be redrawn with new values in the labels.
    */
-  public void render(SpriteBatch batch) {
-    for (Building building : buildings) {
-      drawBuilding(building, batch);
+  public void update() {
+    if (GameState.gameOver) {
+      buildingInfoLabel.setText("Game Over!");
+    } else if (world.selectedBuilding == null) {
+      buildingInfoLabel.setText("");
     }
   }
 
-  /**
-   * Handle placement of a building into the world by determining
-   * the correct draw order and updating the building counters.
-
-   * @param building - A reference to a building object to be placed
-   * @return - The location in the buildings array that the building was placed at
-   */
-  public int placeBuilding(Building building) {
-    // Insert the building into the correct place in the arrayList to ensure it
-    // gets rendered in top-down order
-    // Start by calculating the 'height' values for the left and right corners of the new building
-    // where height is the taxi-cab distance from the top of the map
-    int buildingHeightLeftSide = building.location.y - building.location.x;
-    int buildingHeightRightSide = buildingHeightLeftSide + building.size.y - building.size.x + 1;
-    Point leftCorner = building.location;
-
-    // Move up the array, until the pointer is in the correct place for the new building so the
-    // array is sorted by height
-    int i = 0;
-    while (i < buildings.size()) {
-      Building other = buildings.get(i);
-      int otherHeightLeftSide = other.location.y - other.location.x;
-      // Calculate the taxi-cab distance between the new building's left corner and the other
-      // building's right corner
-      int leftDistance = Math.abs(leftCorner.x - other.location.x - other.size.x + 1)
-          + Math.abs(leftCorner.y - other.location.y - other.size.y + 1);
-      // If the distance is small, compare the height of the new buildin'g left corner to the
-      // height of the other buildings right corner
-      if (leftDistance < Math.min(building.size.x + building.size.y, other.size.x + other.size.y)) {
-        int otherHeightRightSide = otherHeightLeftSide + other.size.y - other.size.x + 1;
-        if (otherHeightRightSide > buildingHeightLeftSide) {
-          i++;
-          continue;
-        } else {
-          break;
-        }
-      }
-      // Otherwise, compare the distance of the new building's right corner to the other building's
-      // left corner
-      if (otherHeightLeftSide > buildingHeightRightSide) {
-        i++;
-      } else {
-        break;
-      }
-    }
-    buildings.add(i, building);
-    updateCounters(building);
-    return i;
-  }
-
-  /**
-   * Creates a counter for the building's type if it is the first to be placed,
-   * otherwise increments the counter for that type by one.
-
-   * @param building - A reference to the building object that was placed
-   */
-  private void updateCounters(Building building) {
-    if (building == previewBuilding) {
-      return;
-    }
-    if (!buildingCounts.containsKey(building.type)) {
-      buildingCounts.put(building.type, 1);
-      return;
-    }
-    buildingCounts.put(building.type, buildingCounts.get(building.type) + 1);
-  }
-
-  /**
-   * Returns the number of buildings of a certain type that have been placed
-   * in the world.
-   *
-   * @param type - The type of building
-   * @return - The number of buildings of that type that have been placed
-   */
-  public int getBuildingCount(BuildingType type) {
-    if (!buildingCounts.containsKey(type)) {
-      return 0;
-    }
-    return buildingCounts.get(type);
-  }
-
-  /**
-   * Sets the building to render as a 'preview' on the map prior to placement.
-
-   * @param previewBuilding - The building to draw as a preview
-   */
-  public void setPreviewBuilding(Building previewBuilding) {
-    if (this.previewBuilding != null) {
-      buildings.remove(this.previewBuilding);
-    }
-    this.previewBuilding = previewBuilding;
-    if (previewBuilding != null) {
-      placeBuilding(previewBuilding);
-    }
-  }
-
-  /**
-   * Draw the building texture at the position of the mouse cursor
-   * when building mode is enabled.
-
-   * @param building - The building to draw under the mouse cursor
-   * @param batch - the SpriteBatch to draw into
-   */
-  public void drawBuilding(Building building, SpriteBatch batch) {
-    Vector3 btmLeftPos = new Vector3(
-        (float) building.location.x + (
-          building.flipped ? building.textureOffset.x : building.textureOffset.x
-        ),
-        (float) building.location.y + (
-          building.flipped ? building.textureOffset.y : building.textureOffset.y
-        ),
-        0f
-    );
-    Vector3 btmRightPos = new Vector3(btmLeftPos).add(new Vector3(building.size.x - 1, 0f, 0f));
-    btmLeftPos.mul(isoTransform);
-    btmRightPos.mul(isoTransform);
-    batch.draw(
-        building.texture,
-        btmLeftPos.x, btmRightPos.y,
-        building.texture.getWidth() * building.textureScale,
-        building.texture.getHeight() * building.textureScale,
-        0, 0, building.texture.getWidth(), building.texture.getHeight(),
-        building.flipped, false
-    );
+  public void reset() {
+    buildingInfoLabel.setText("");
   }
 }
