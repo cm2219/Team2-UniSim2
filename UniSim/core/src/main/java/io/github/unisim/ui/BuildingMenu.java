@@ -85,16 +85,6 @@ public class BuildingMenu {
         BuildingType.SLEEPING,
         "Student Accomodation"
     ));
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/swimmingPool.png")),
-        0.0025f,
-        new Vector2(1f, -2.4f),
-        new Point(),
-        new Point(6, 9),
-        false,
-        BuildingType.RECREATION,
-        "Swimming Pool"
-    ));
 
     table = new Table();
     // Add buldings to the table
@@ -104,6 +94,9 @@ public class BuildingMenu {
       buildingImages.get(i).addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent e, float x, float y) {
+          if (GameState.paused) {
+                return;
+          }
           if (world.selectedBuilding == buildings.get(buildingIndex)) {
             world.selectedBuilding = null;
           } else {
