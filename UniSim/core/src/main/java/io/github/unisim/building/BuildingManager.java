@@ -247,6 +247,6 @@ public class BuildingManager {
                 nearestDistance = distance;
             }
         }
-        return nearestDistance == Double.MAX_VALUE ? 50 : nearestDistance; // 50 为一个合理的较大距离
+        return nearestDistance == Double.MAX_VALUE ? 50 : nearestDistance; 
     }
 }
