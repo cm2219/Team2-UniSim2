@@ -23,6 +23,8 @@ public class StartMenuScreen implements Screen {
   private TextButton playButton;
   private TextButton settingsButton;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
+  private TextButton leaderBoardButton;
+  private TextButton achievementsButton;
 
   /**
    * Create a new StartMenuScreen and draw the initial UI layout.
@@ -52,15 +54,39 @@ public class StartMenuScreen implements Screen {
       }
     });
 
-    // Add UI elements to the stage
+    // Leaderboard button
+    leaderBoardButton = new TextButton("Leaderboard", skin);
+    leaderBoardButton.addListener(new ClickListener() {
+        @Override
+        public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+            GameState.currentScreen = GameState.leaderboardScreen;
+        }
+      });
+
+    // Achievements button
+    achievementsButton = new TextButton("Achievements", skin);
+    achievementsButton.addListener(new ClickListener() {
+        @Override
+        public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+            GameState.currentScreen = GameState.achievementsScreen;
+        }
+    });
+
+
+
+      // Add UI elements to the stage
     table.setFillParent(true);
     table.center().center();
     table.pad(100, 100, 100, 100);
     table.add(playButton).center().width(250).height(100).padBottom(10);
     table.row();
-    table.add(settingsButton).center().width(250).height(67);
-    stage.addActor(table);
+    table.add(settingsButton).center().width(250).height(67).padBottom(10);
+    table.row();
+    table.add(leaderBoardButton).center().width(250).height(67).padBottom(10);
+    table.row();
+    table.add(achievementsButton).center().width(250).height(67);
 
+    stage.addActor(table);
     inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
     inputMultiplexer.addProcessor(stage);
   }
