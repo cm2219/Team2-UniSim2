@@ -59,6 +59,9 @@ public class WorldInputProcessor implements InputProcessor {
    */
   @Override
   public boolean touchDown(int x, int y, int pointer, int button) {
+    if (GameState.paused) {
+        return false;
+    }
     clickedOnWorld = true;
     draggedSinceClick = false;
     cursorPos[0] = cursorPosWhenClicked[0] = x;
