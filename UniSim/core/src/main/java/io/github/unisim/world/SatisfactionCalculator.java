@@ -5,6 +5,7 @@ import io.github.unisim.building.BuildingManager;
 import io.github.unisim.building.BuildingType;
 import io.github.unisim.GameState;
 
+import java.lang.constant.Constable;
 import java.util.Map;
 
 public class SatisfactionCalculator {
@@ -33,21 +34,21 @@ public class SatisfactionCalculator {
             return;
         }
         // Define weightings for distance-based bonuses.
-        Map<String, Double> typeWeights = Map.of(
-            "Library", 0.3,
-            "Student Accomodation", 0.2,
-            "Canteen", 0.25,
-            "Basketball Court", 0.15,
-            "Swimming Pool", 0.4
+        Map<BuildingType, Double> typeWeights = Map.of(
+            BuildingType.LEARNING, 0.3,
+            BuildingType.SLEEPING, 0.2,
+            BuildingType.EATING, 0.25,
+            BuildingType.RECREATION, 0.4
         );
 
         double totalDistanceBonus = 0.0;
 
         double nearestDistance = 0;
-        for (Map.Entry<String, Double> entry : typeWeights.entrySet()) {
-            String buildingName = entry.getKey();
+        for (Map.Entry<BuildingType, Double> entry : typeWeights.entrySet()) {
+            BuildingType type = entry.getKey();
             double weight = entry.getValue();
-            nearestDistance = buildingsManager.calculateNearestDistance(newBuilding, buildingName);
+            if (newBuilding.name == "Basketball Court") {weight *= 0.5;}
+            nearestDistance = buildingsManager.calculateNearestDistance(newBuilding, type);
 
             double distanceBonus = 0.0;
             if (nearestDistance != Double.MAX_VALUE) {
