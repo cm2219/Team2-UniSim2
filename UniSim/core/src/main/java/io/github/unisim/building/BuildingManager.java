@@ -40,7 +40,7 @@ public class BuildingManager {
   public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer, Building building) {
     boolean buildable = true;
     //check if user has enough money to build the selected building.
-    Integer buildCost = building.getPrice()
+    Integer buildCost = building.price
     Integer userBalance = balance.getBalance()
     if (userBalance) < buildCost){
       buildable = false;
