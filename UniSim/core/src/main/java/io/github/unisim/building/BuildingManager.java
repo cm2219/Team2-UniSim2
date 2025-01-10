@@ -230,23 +230,26 @@ public class BuildingManager {
      * calculate the nearest distance from building to building
      *
      * @param newBuilding - place a new building
-     * @param targetType - the target building type
+     * @param targetBuilding - the target building
      * @return the nearest building (Euclidean distance)
      */
-    public double calculateNearestDistance(Building newBuilding, BuildingType targetType) {
+    public double calculateNearestDistance(Building newBuilding, String targetBuilding) {
         double nearestDistance = Double.MAX_VALUE;
         for (Building building : buildings) {
-            if (building.type != targetType) {
+            if (building.name != targetBuilding) {
                 continue;
             }
             double distance = Math.sqrt(
                 Math.pow(newBuilding.location.x - building.location.x, 2) +
                     Math.pow(newBuilding.location.y - building.location.y, 2)
             );
-            if (distance < nearestDistance) {
+            if (distance < nearestDistance && distance != 0) {
                 nearestDistance = distance;
             }
         }
-        return nearestDistance == Double.MAX_VALUE ? 50 : nearestDistance;
+        if (nearestDistance == Double.MAX_VALUE) {
+            return 50;
+        }
+        return nearestDistance;
     }
 }
