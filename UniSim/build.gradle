@@ -30,7 +30,6 @@ allprojects {
 configure(subprojects) {
   apply plugin: 'java-library'
   sourceCompatibility = 17
-
   // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
   // The article can be helpful when using assets.txt in your project.
   tasks.register('generateAssetList') {
@@ -65,9 +64,11 @@ subprojects {
     // You may want to remove the following line if you have errors downloading dependencies.
     mavenLocal()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.x.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
 }
 
 eclipse.project.name = 'UniSim' + '-parent'
+
+

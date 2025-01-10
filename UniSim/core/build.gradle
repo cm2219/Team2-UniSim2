@@ -8,4 +8,5 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+  implementation 'org.junit.jupiter:junit-jupiter:5.11.0-M1'
 }
