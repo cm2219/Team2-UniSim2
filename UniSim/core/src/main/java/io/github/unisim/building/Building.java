@@ -45,4 +45,16 @@ public class Building {
     this.name = name;
     this.price = price;
   }
+
+  public Point getLocation() {
+      return location;
+  }
+
+  public Point getSize() {
+      return size;
+  }
+
+  public BuildingType getType() {
+      return type;
+  }
 }

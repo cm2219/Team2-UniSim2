@@ -109,24 +109,24 @@ public class BuildingManager {
         // gets rendered in top-down order
         // Start by calculating the 'height' values for the left and right corners of the new building
         // where height is the taxi-cab distance from the top of the map
-        int buildingHeightLeftSide = building.location.y - building.location.x;
-        int buildingHeightRightSide = buildingHeightLeftSide + building.size.y - building.size.x + 1;
-        Point leftCorner = building.location;
+        int buildingHeightLeftSide = building.getLocation().y - building.getLocation().x;
+        int buildingHeightRightSide = buildingHeightLeftSide + building.getSize().y - building.getSize().x + 1;
+        Point leftCorner = building.getLocation();
 
         // Move up the array, until the pointer is in the correct place for the new building so the
         // array is sorted by height
         int i = 0;
         while (i < buildings.size()) {
             Building other = buildings.get(i);
-            int otherHeightLeftSide = other.location.y - other.location.x;
+            int otherHeightLeftSide = other.getLocation().y - other.getLocation().x;
             // Calculate the taxi-cab distance between the new building's left corner and the other
             // building's right corner
-            int leftDistance = Math.abs(leftCorner.x - other.location.x - other.size.x + 1)
-                + Math.abs(leftCorner.y - other.location.y - other.size.y + 1);
+            int leftDistance = Math.abs(leftCorner.x - other.getLocation().x - other.getSize().x + 1)
+                + Math.abs(leftCorner.y - other.getLocation().y - other.getSize().y + 1);
             // If the distance is small, compare the height of the new buildin'g left corner to the
             // height of the other buildings right corner
-            if (leftDistance < Math.min(building.size.x + building.size.y, other.size.x + other.size.y)) {
-                int otherHeightRightSide = otherHeightLeftSide + other.size.y - other.size.x + 1;
+            if (leftDistance < Math.min(building.getSize().x + building.getSize().y, other.getSize().x + other.getSize().y)) {
+                int otherHeightRightSide = otherHeightLeftSide + other.getSize().y - other.getSize().x + 1;
                 if (otherHeightRightSide > buildingHeightLeftSide) {
                     i++;
                     continue;
@@ -157,11 +157,11 @@ public class BuildingManager {
         if (building == previewBuilding) {
             return;
         }
-        if (!buildingCounts.containsKey(building.type)) {
-            buildingCounts.put(building.type, 1);
+        if (!buildingCounts.containsKey(building.getType())) {
+            buildingCounts.put(building.getType(), 1);
             return;
         }
-        buildingCounts.put(building.type, buildingCounts.get(building.type) + 1);
+        buildingCounts.put(building.getType(), buildingCounts.get(building.getType()) + 1);
     }
 
     /**
