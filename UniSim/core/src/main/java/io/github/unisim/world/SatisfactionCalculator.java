@@ -64,12 +64,4 @@ public class SatisfactionCalculator {
             ", Bonus: " + totalDistanceBonus + ", Final: " + finalIncrease);
     }
 
-    /**
-     * Retrieves the current satisfaction score from the game state.
-     *
-     * @return The current satisfaction score.
-     */
-    public static double getSatisfaction() {
-        return GameState.satisfaction;
-    }
 }
