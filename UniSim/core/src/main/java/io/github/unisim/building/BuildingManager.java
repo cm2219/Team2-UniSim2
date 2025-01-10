@@ -11,6 +11,7 @@ import io.github.unisim.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import io.github.unisim.world.SatisfactionCalculator;
 
 /**
  * Manage the buildings placed in the world and methods common to all buildings.
@@ -29,9 +30,9 @@ public class BuildingManager {
 
     /**
      * Determines if a region on the map is composed solely of buildable tiles.
-
-     * @param btmLeft - The co-ordinates of the bottom left corner of the search region
-     * @param topRight - The co-ordinates of the top right corner of the search region
+     *
+     * @param btmLeft   - The co-ordinates of the bottom left corner of the search region
+     * @param topRight  - The co-ordinates of the top right corner of the search region
      * @param tileLayer - A reference to the map layer containing all terrain tiles
      * @return - true if the region is made solely of buildable tiles, false otherwise
      */
@@ -78,7 +79,7 @@ public class BuildingManager {
 
     /**
      * Helper method that determines if the provided tile may be built on.
-
+     *
      * @param tile - A reference to a tile on the terrain layer of the map.
      * @return - true if the tile is buildable, false otherwise
      */
@@ -88,7 +89,7 @@ public class BuildingManager {
 
     /**
      * Draws each building from the building list onto the map.
-
+     *
      * @param batch - the SpriteBatch in which to draw
      */
     public void render(SpriteBatch batch) {
@@ -100,31 +101,30 @@ public class BuildingManager {
     /**
      * Handle placement of a building into the world by determining
      * the correct draw order and updating the building counters.
-
+     *
      * @param building - A reference to a building object to be placed
      * @return - The location in the buildings array that the building was placed at
      */
     public int placeBuilding(Building building) {
-        // Insert the building into the correct place in the arrayList to ensure it
-        // gets rendered in top-down order
-        // Start by calculating the 'height' values for the left and right corners of the new building
-        // where height is the taxi-cab distance from the top of the map
+        if (GameState.paused) {
+            return -1;
+        }
+        if (building == previewBuilding) {
+            return -1; // Ignore preview building
+        }
+
+        // The original placement logic remains unchanged
         int buildingHeightLeftSide = building.location.y - building.location.x;
         int buildingHeightRightSide = buildingHeightLeftSide + building.size.y - building.size.x + 1;
         Point leftCorner = building.location;
 
-        // Move up the array, until the pointer is in the correct place for the new building so the
-        // array is sorted by height
         int i = 0;
         while (i < buildings.size()) {
             Building other = buildings.get(i);
             int otherHeightLeftSide = other.location.y - other.location.x;
-            // Calculate the taxi-cab distance between the new building's left corner and the other
-            // building's right corner
             int leftDistance = Math.abs(leftCorner.x - other.location.x - other.size.x + 1)
                 + Math.abs(leftCorner.y - other.location.y - other.size.y + 1);
-            // If the distance is small, compare the height of the new buildin'g left corner to the
-            // height of the other buildings right corner
+
             if (leftDistance < Math.min(building.size.x + building.size.y, other.size.x + other.size.y)) {
                 int otherHeightRightSide = otherHeightLeftSide + other.size.y - other.size.x + 1;
                 if (otherHeightRightSide > buildingHeightLeftSide) {
@@ -134,8 +134,7 @@ public class BuildingManager {
                     break;
                 }
             }
-            // Otherwise, compare the distance of the new building's right corner to the other building's
-            // left corner
+
             if (otherHeightLeftSide > buildingHeightRightSide) {
                 i++;
             } else {
@@ -144,13 +143,17 @@ public class BuildingManager {
         }
         buildings.add(i, building);
         updateCounters(building);
+
+        // use SatisfactionCalculator to calculate the satisfaction
+        SatisfactionCalculator.calculateAndUpdateSatisfaction(building, this);
+
         return i;
     }
 
     /**
      * Creates a counter for the building's type if it is the first to be placed,
      * otherwise increments the counter for that type by one.
-
+     *
      * @param building - A reference to the building object that was placed
      */
     private void updateCounters(Building building) {
@@ -180,7 +183,7 @@ public class BuildingManager {
 
     /**
      * Sets the building to render as a 'preview' on the map prior to placement.
-
+     *
      * @param previewBuilding - The building to draw as a preview
      */
     public void setPreviewBuilding(Building previewBuilding) {
@@ -189,16 +192,16 @@ public class BuildingManager {
         }
         this.previewBuilding = previewBuilding;
         if (previewBuilding != null) {
-            placeBuilding(previewBuilding);
+            buildings.add(previewBuilding);
         }
     }
 
     /**
      * Draw the building texture at the position of the mouse cursor
      * when building mode is enabled.
-
+     *
      * @param building - The building to draw under the mouse cursor
-     * @param batch - the SpriteBatch to draw into
+     * @param batch    - the SpriteBatch to draw into
      */
     public void drawBuilding(Building building, SpriteBatch batch) {
         Vector3 btmLeftPos = new Vector3(
@@ -240,10 +243,13 @@ public class BuildingManager {
                 Math.pow(newBuilding.location.x - building.location.x, 2) +
                     Math.pow(newBuilding.location.y - building.location.y, 2)
             );
-            if (distance < nearestDistance) {
+            if (distance < nearestDistance && distance != 0) {
                 nearestDistance = distance;
             }
         }
-        return nearestDistance == Double.MAX_VALUE ? 50 : nearestDistance;
+        if (nearestDistance == Double.MAX_VALUE) {
+            return 50;
+        }
+        return nearestDistance;
     }
 }

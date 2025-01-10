@@ -25,7 +25,7 @@ public class InfoBar {
   private Table buildingCountersTable = new Table();
   private Label[] buildingCounterLabels = new Label[4];
   private Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-  private Label scoreLabel = new Label("86%", skin);
+  private Label scoreLabel = new Label(GameState.satisfaction + "%", skin);
   private Label titleLabel = new Label("UniSim", skin);
   private Label timerLabel;
   private Texture pauseTexture = new Texture("ui/pause.png");
@@ -107,6 +107,10 @@ public class InfoBar {
     buildingCounterLabels[3].setText("Sleeping: "
         + Integer.toString(world.getBuildingCount(BuildingType.SLEEPING)));
     pauseButtonCell.setActor(GameState.paused ? playImage : pauseImage);
+
+    int satisfactionPercentage = (int) ((GameState.satisfaction / (float) GameState.MAX_SATISFACTION) * 100);
+    scoreLabel.setText(satisfactionPercentage + "%");
+
   }
 
   /**
