@@ -1,4 +1,4 @@
-package io.github.unisim.satisfaction;
+package io.github.unisim.world;
 
 import io.github.unisim.building.Building;
 import io.github.unisim.building.BuildingManager;
@@ -69,7 +69,7 @@ public class SatisfactionCalculator {
      *
      * @return The current satisfaction score.
      */
-    public double getSatisfaction() {
+    public static double getSatisfaction() {
         return GameState.satisfaction;
     }
 }

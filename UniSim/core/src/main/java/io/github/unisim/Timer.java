@@ -15,7 +15,7 @@ public class Timer {
    * Create a new timer set to count down from an initial number of milliseconds
    * for an initial number
    * of events.
-   * 
+   *
    * @param initialTime   - The number of milliseconds before the next event
    * @param initialEvents - The number of events before the timer ends
    */
@@ -32,7 +32,7 @@ public class Timer {
    * has stopped.
    * Decrements the remaining number of events and resets the remaining time until
    * the next event.
-   * 
+   *
    * @param deltaTime - the time in milliseconds to remove from the counter
    * @return - true if the timer is running, the time has been decremented and
    *         there are remaining events,
@@ -67,7 +67,7 @@ public class Timer {
   /**
    * Return the total remaining time until the timer ends in a String
    * representation.
-   * 
+   *
    * @return - time before timer ends in the form MM:SS
    */
   public String getRemainingTime() {
@@ -83,7 +83,7 @@ public class Timer {
   /**
    * Format a number of minutes or seconds to always have a length of two digits.
    * This is done by prepending a zero if the number has only one digit.
-   * 
+   *
    * @param num - the number to convert to a formatted string
    * @return - a formatted string with length at least two.
    */
@@ -96,7 +96,7 @@ public class Timer {
 
   /**
    * Return whether the timer is still running or has reached zero.
-   * 
+   *
    * @return - true if the timer is running, false if the remaining time has
    *         reached zero
    */
@@ -106,7 +106,7 @@ public class Timer {
 
   /**
    * Return the number of events that are due to have happened at this time.
-   * 
+   *
    * @return - an integer between 0 and 9.
    */
   public int getEventNumber() {
