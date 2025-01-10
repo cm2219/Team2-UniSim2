@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import io.github.unisim.GameState;
 import io.github.unisim.Timer;
+import io.github.unisim.PlayerBalance;
 import io.github.unisim.building.BuildingType;
 import io.github.unisim.world.World;
 
@@ -40,7 +41,7 @@ public class InfoBar {
   private Cell[] buildingCounterCells;
   private World world;
   //Implement Money
-  private Label balanceLabel = new Label(this.currentBalance.getBalance(), skin);
+  private Label balanceLabel = new Label(this.balance.getBalance(), skin);
   private Texture moneyTexture = new Texture("ui/money.png");
   private Image moneyIcon = new Image(moneyTexture);
   private Cell<Label> balanceCell;
@@ -50,10 +51,10 @@ public class InfoBar {
 
    * @param stage - The stage on which to draw the InfoBar.
    */
-  public InfoBar(Stage stage, Timer timer, World world, PlayerBalance currentBalance) {
+  public InfoBar(Stage stage, Timer timer, World world, PlayerBalance balance) {
     this.timer = timer;
     this.world = world;
-    this.currentBalance = currentBalance;
+    this.balance = balance;
     buildingCounterCells = new Cell[4];
 
     // Building counter table
@@ -119,7 +120,7 @@ public class InfoBar {
         + Integer.toString(world.getBuildingCount(BuildingType.SLEEPING)));
     pauseButtonCell.setActor(GameState.paused ? playImage : pauseImage);
     //Implement Money
-    balanceLabel.settext(Integer.toString(this.currentBalance.getBalance()));
+    balanceLabel.settext(Integer.toString(this.balance.getBalance()));
   }
 
   /**
