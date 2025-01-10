@@ -8,9 +8,11 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import io.github.unisim.GameState;
 import io.github.unisim.Point;
+import io.github.unisim.PlayerBalance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import io.github.unisim.PlayerBalance;
 
 /**
  * Manage the buildings placed in the world and methods common to all buildings.
@@ -35,10 +37,11 @@ public class BuildingManager {
    * @param tileLayer - A reference to the map layer containing all terrain tiles
    * @return - true if the region is made solely of buildable tiles, false otherwise
    */
-  public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer) {
+  public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer, Building building) {
     boolean buildable = true;
     //check if user has enough money to build the selected building.
-    Integer userBalance = Integer.valueOf(this.currentBalance.getBalance());
+    Integer buildCost = building.getPrice()
+    Integer userBalance = balance.getBalance()
     if (userBalance) < buildCost){
       buildable = false;
     }
