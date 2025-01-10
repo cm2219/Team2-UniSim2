@@ -6,11 +6,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import io.github.unisim.ui.GameScreen;
+import io.github.unisim.ui.LeaderboardScreen;
 import io.github.unisim.ui.SettingsScreen;
 import io.github.unisim.ui.StartMenuScreen;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import io.github.unisim.ui.AchievementsScreen;
+
 
 /**
  * Contains a collection of settings and references that should be available globally.
@@ -22,6 +25,8 @@ public class GameState {
   public static Settings settings = new Settings();
   public static InputProcessor fullscreenInputProcessor = new FullscreenInputProcessor();
   public static Screen gameScreen = new GameScreen();
+  public static Screen leaderboardScreen = new LeaderboardScreen();
+  public static Screen achievementsScreen = new AchievementsScreen();
   public static Screen startScreen = new StartMenuScreen();
   public static Screen settingScreen = new SettingsScreen();
   public static Screen currentScreen;
@@ -32,4 +37,20 @@ public class GameState {
   );
   public static boolean paused = true;
   public static boolean gameOver = false;
+  public static int satisfaction = 0; // the initial satisfaction score
+  public static final int MAX_SATISFACTION = 100;
+    /**
+     * update the satisfaction, but only increasing
+     * @param delta increasement
+     */
+    public static void increaseSatisfaction(int delta) {
+        int previousSatisfaction = satisfaction;
+        satisfaction += delta;
+        if (satisfaction > MAX_SATISFACTION) {
+            satisfaction = MAX_SATISFACTION;
+        }
+        System.out.println("Previous Satisfaction: " + previousSatisfaction +
+            ", Delta: " + delta +
+            ", New Satisfaction: " + satisfaction);
+    }
 }
