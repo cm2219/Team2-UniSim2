@@ -19,6 +19,7 @@ public class Building {
   public boolean flipped;
   public BuildingType type;
   public String name;
+  public Integer price;
 
   /**
    * Create a new building to display in the building menu and place in the world.
@@ -33,7 +34,7 @@ public class Building {
    * @param name - The name of the building to display when selected
    */
   public Building(Texture texture, float textureScale, Vector2 textureOffset, Point location,
-      Point size, Boolean flipped, BuildingType type, String name) {
+      Point size, Boolean flipped, BuildingType type, String name, Integer price) {
     this.texture = texture;
     this.location = location;
     this.size = size;
@@ -42,5 +43,6 @@ public class Building {
     this.flipped = flipped;
     this.type = type;
     this.name = name;
+    this.price = price;
   }
 }
