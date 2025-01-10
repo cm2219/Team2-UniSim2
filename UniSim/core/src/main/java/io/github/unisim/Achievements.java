@@ -1,3 +1,5 @@
+package io.github.unisim;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,7 +9,7 @@ import java.util.TreeMap;
 import io.github.unisim.building.BuildingManager;
 import io.github.unisim.building.BuildingType;
 import io.github.unisim.PlayerBalance;
-import io.github.unisim.satisfaction.SatisfactionCalculator;
+import io.github.unisim.world.SatisfactionCalculator;
 
 public class Achievements {
     private static class AchievementData {
@@ -30,16 +32,16 @@ public class Achievements {
     }
 
     private void initializeDefaultAchievements() {
-        achievements.put("Perfect Balance", 
+        achievements.put("Perfect Balance",
             new AchievementData("Finish the game with exactly $0", false, 30));
-        
-        achievements.put("High Scorer", 
+
+        achievements.put("High Scorer",
             new AchievementData("Score over 80% in a game", false, 30));
-        
-        achievements.put("Rock Bottom", 
+
+        achievements.put("Rock Bottom",
             new AchievementData("Score less than 10% in a game", false, -20));
-        
-        achievements.put("Master Builder", 
+
+        achievements.put("Master Builder",
             new AchievementData("Place at least one of each building type", false, 10));
     }
 
@@ -48,7 +50,7 @@ public class Achievements {
         if (achievements.containsKey(title)) {
             AchievementData current = achievements.get(title);
             achievements.put(title, new AchievementData(
-                current.description, 
+                current.description,
                 true,  // Mark as achieved
                 current.effect
             ));
@@ -70,8 +72,8 @@ public class Achievements {
 
     // Method to check score-based achievements
     public void checkScoreAchievements() {
-        double satisfactionScore = satisfactionCalculator.getSatisfaction();
-        
+        double satisfactionScore = SatisfactionCalculator.getSatisfaction();
+
         if (satisfactionScore >= 80.0) {
             completeAchievement("High Scorer");
         }
@@ -166,28 +168,5 @@ public class Achievements {
                 entry.getValue().description,
                 entry.getValue().effect);
         }
-    }
-
-    // Main method for testing
-    public static void main(String[] args) {
-        Achievements achievements = new Achievements();
-        
-        // Display initial achievements
-        achievements.displayAchievements();
-        
-        // Test completing some achievements
-        achievements.checkScoreAchievements(85.0);  // Should unlock High Scorer
-        achievements.checkMoneyBalance(0);   // Should unlock Perfect Balance
-        
-        // Test building placement
-        boolean[] buildingTypes = {true, true, true, true}; // Example with 4 building types
-        achievements.checkMasterBuilder(buildingTypes);
-        
-        // Display updated achievements
-        System.out.println("\nAfter completing some achievements:");
-        achievements.displayAchievements();
-        
-        // Save to CSV
-        achievements.toCsvFile();
     }
 }
