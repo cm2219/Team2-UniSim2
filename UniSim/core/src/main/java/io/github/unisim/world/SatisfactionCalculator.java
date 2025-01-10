@@ -22,7 +22,8 @@ public class SatisfactionCalculator {
         // Check if this is the first building of its type.
         boolean isFirstBuilding = buildingsManager.getBuildingCount(BuildingType.LEARNING) == 0 &&
             buildingsManager.getBuildingCount(BuildingType.RECREATION) == 0 &&
-            buildingsManager.getBuildingCount(BuildingType.EATING) == 0;
+            buildingsManager.getBuildingCount(BuildingType.EATING) == 0 &&
+            buildingsManager.getBuildingCount(BuildingType.SLEEPING) == 0;
 
         // Directly increase satisfaction for the first building.
         if (isFirstBuilding) {
@@ -32,23 +33,26 @@ public class SatisfactionCalculator {
             return;
         }
         // Define weightings for distance-based bonuses.
-        Map<BuildingType, Double> typeWeights = Map.of(
-            BuildingType.LEARNING, 0.3,
-            BuildingType.RECREATION, 0.3,
-            BuildingType.EATING, 0.3
+        Map<String, Double> typeWeights = Map.of(
+            "Library", 0.3,
+            "Student Accomodation", 0.2,
+            "Canteen", 0.25,
+            "Basketball Court", 0.15,
+            "Swimming Pool", 0.4
         );
 
         double totalDistanceBonus = 0.0;
 
-        for (Map.Entry<BuildingType, Double> entry : typeWeights.entrySet()) {
-            BuildingType type = entry.getKey();
+        double nearestDistance = 0;
+        for (Map.Entry<String, Double> entry : typeWeights.entrySet()) {
+            String buildingName = entry.getKey();
             double weight = entry.getValue();
-            double nearestDistance = buildingsManager.calculateNearestDistance(newBuilding, type);
+            nearestDistance = buildingsManager.calculateNearestDistance(newBuilding, buildingName);
 
             double distanceBonus = 0.0;
             if (nearestDistance != Double.MAX_VALUE) {
                 // Calculate bonus inversely proportional to distance.
-                distanceBonus = (weight * 20) / Math.sqrt(1 + nearestDistance);
+                distanceBonus = (weight * 35) / Math.sqrt(1 + nearestDistance);
             }
             totalDistanceBonus += distanceBonus;
         }
