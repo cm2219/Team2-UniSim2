@@ -14,7 +14,7 @@ import java.io.BufferedReader;
  */
 public class Event {
     private int money;
-    private double points;
+    private int points;
     private String title;
     private String description;
 
@@ -38,7 +38,7 @@ public class Event {
      * @param eventNumber - The current event number
      * @param score       - The user's current score
      */
-    public Event(int eventNumber, double score) {
+    public Event(int eventNumber, int score) {
 
         if (eventNumber == 0) {
             money = 0;
@@ -60,7 +60,7 @@ public class Event {
             Random rand = new Random();
             int randInt = rand.nextInt(10);
 
-            File file = new File("data/randomEvents.csv");
+            File file = new File("randomEvents.csv");
 
             if (!file.exists()) {
                 System.out.println("CSV file not found: randomEvents.csv");
@@ -79,7 +79,7 @@ public class Event {
                             title = parts[0].trim();
                             description = parts[1].trim();
                             money = Integer.parseInt(parts[2].trim());
-                            points = Double.parseDouble(parts[3].trim());
+                            points = Integer.parseInt(parts[3].trim());
                         }
                     }
                     lineNumber += 1;
@@ -122,9 +122,9 @@ public class Event {
     /**
      * Return the points value of the event.
      *
-     * @return - a double between -1 and 1.
+     * @return - an integer.
      */
-    public double getEventPoints() {
+    public int getEventPoints() {
         return points;
     }
 
