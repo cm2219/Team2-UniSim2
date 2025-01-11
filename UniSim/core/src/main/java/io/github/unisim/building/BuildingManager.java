@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import io.github.unisim.GameState;
 import io.github.unisim.Point;
+import io.github.unisim.PlayerBalance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +36,18 @@ public class BuildingManager {
      * @param tileLayer - A reference to the map layer containing all terrain tiles
      * @return - true if the region is made solely of buildable tiles, false otherwise
      */
-    public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer) {
+    public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer, Building building, PlayerBalance balance) {
         boolean buildable = true;
+
+        // Check if player balance is greater than building price
+        if (building != null && balance != null) {
+            Integer buildCost = building.price;
+            int userBalance = balance.getBalance();
+            if (userBalance < buildCost) {
+                buildable = false;
+            }
+        }
+
         // we iterate over each tile within the search region and check
         // for any non-buildable tiles.
         for (int x = btmLeft.x; x <= topRight.x && buildable; x++) {
@@ -58,12 +69,12 @@ public class BuildingManager {
         }
 
         // Next, iterate over the current buildings to see if any intersect the new building
-        for (Building building : buildings) {
-            // Use the seperating axis theorem to detect building overlap
-            if (!(building.location.x > topRight.x
-                || building.location.x + building.size.x - 1 < btmLeft.x
-                || building.location.y > topRight.y
-                || building.location.y + building.size.y - 1 < btmLeft.y)
+        for (Building newBuilding : buildings) {
+            // Use the separating axis theorem to detect building overlap
+            if (!(newBuilding.location.x > topRight.x
+                || newBuilding.location.x + newBuilding.size.x - 1 < btmLeft.x
+                || newBuilding.location.y > topRight.y
+                || newBuilding.location.y + newBuilding.size.y - 1 < btmLeft.y)
             ) {
                 if (building == previewBuilding) {
                     continue;
