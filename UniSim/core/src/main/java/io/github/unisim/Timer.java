@@ -75,14 +75,10 @@ public class Timer {
     // milliseconds.
     int totalRemainingTime = (int) (initialTime * (remainingEvents) + remainingTime);
     int remainingMinutes = (int) ((totalRemainingTime) / 60_000);
-    int remainingSeconds = (int) Math.ceil((double)totalRemainingTime / 1000 - 60 * remainingMinutes);
+    int remainingSeconds = (int) Math.ceil(totalRemainingTime / 1000 - 60 * remainingMinutes);
 
     return formatNum(remainingMinutes) + ":" + formatNum(remainingSeconds);
   }
-  public int getRemainingTimeinMillis(){
-      return (int) (initialTime * (remainingEvents - 1) + remainingTime);
-  }
-
 
   /**
    * Format a number of minutes or seconds to always have a length of two digits.
