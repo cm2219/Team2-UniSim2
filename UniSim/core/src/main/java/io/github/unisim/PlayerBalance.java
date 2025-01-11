@@ -22,6 +22,13 @@ public class PlayerBalance {
     return this.balance;
   }
 
+/* Return current balance as a string.
+ * @return - balance in string form
+ */
+public String getStrBalance(){
+    return String.valueOf(this.balance);
+}
+
   /*Update balance
   */
   public void updateBalance(int changeAmt) {
