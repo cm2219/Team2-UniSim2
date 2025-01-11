@@ -11,6 +11,7 @@ import io.github.unisim.Timer;
 import io.github.unisim.world.UiInputProcessor;
 import io.github.unisim.world.World;
 import io.github.unisim.world.WorldInputProcessor;
+import io.github.unisim.Event;
 
 /**
  * Game screen where the main game is rendered and controlled.
@@ -27,7 +28,14 @@ public class GameScreen implements Screen {
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameOverMenu gameOverMenu = new GameOverMenu();
 
-  /**
+  private int currentEventNumber= 0;   //keeps track of event number
+    private double playerScore =1.0; //placeholder for score
+    private Event currentEvent;
+    private long lastEventTriggerTime = 0; // Stores the last time an event was triggered
+    private static final long EVENT_INTERVAL = 10_000; // 10 seconds in milliseconds
+
+
+    /**
    * Initializes the game screen components.
    *
    * {@link Timer} for game countdown.
@@ -36,7 +44,7 @@ public class GameScreen implements Screen {
    * Input processors for hanlding player inputs
    */
   public GameScreen() {
-    timer = new Timer(30_000, 10);
+    timer = new Timer(30_000, 9);
     infoBar = new InfoBar(stage, timer, world);
     buildingMenu = new BuildingMenu(stage, world);
 
@@ -44,6 +52,8 @@ public class GameScreen implements Screen {
     inputMultiplexer.addProcessor(stage);
     inputMultiplexer.addProcessor(uiInputProcessor);
     inputMultiplexer.addProcessor(worldInputProcessor);
+
+    triggerNewEvent();
   }
 
   @Override
@@ -69,6 +79,14 @@ public class GameScreen implements Screen {
         GameState.gameOver = true;
         Gdx.input.setInputProcessor(gameOverMenu.getInputProcessor());
       }
+        long currentTime = System.currentTimeMillis(); // Get the current system time
+
+        // Check if enough time has passed since the last event
+        if (currentTime - lastEventTriggerTime >= EVENT_INTERVAL) {
+            triggerNewEvent();
+            lastEventTriggerTime = currentTime; // Update the last event trigger time
+        }
+
     }
 
     stage.act(dt);
@@ -87,7 +105,36 @@ public class GameScreen implements Screen {
     }
   }
 
-  /**
+    /**
+     * Triggers a new event based on the current event number and player score.
+     * Increments the event number after creating the event.
+     */
+    private void triggerNewEvent() {
+        //Create a new event
+        currentEvent = new Event(currentEventNumber++, playerScore);
+
+        //Update the display with the event details
+        updateEventDisplay(currentEvent);
+    }
+
+    private void updateEventDisplay(Event event) {
+        // Update the InfoBar with the event's title and description
+        if (currentEvent != null) { // Ensure the event exists before updating
+            infoBar.setEventTitle(currentEvent.getEventTitle());
+            infoBar.setEventDescription(currentEvent.getEventDescription());
+        }
+
+        // Log the event details for debugging pruposes
+        System.out.println("Event Triggered: " + currentEvent.getEventTitle());
+        System.out.println("Description: " + currentEvent.getEventDescription());
+        System.out.println("Money: " + currentEvent.getEventMoney());
+        System.out.println("Points: " + currentEvent.getEventPoints());
+    }
+
+
+
+
+    /**
    * Adjusts the layout and components when the screen size changes.
    *
    * @param width  New screen width in pixels.
