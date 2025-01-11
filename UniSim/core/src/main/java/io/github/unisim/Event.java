@@ -48,10 +48,10 @@ public class Event {
         }
 
         else if (eventNumber % 2 == 0) {
-            money = (int) (10_000 * score);
+            money = (int) (100 * score);
             points = 0;
             title = "Funding for year " + Integer.toString(eventNumber / 2 + 1);
-            description = "Currently your students are " + Integer.toString((int) (score * 100))
+            description = "Currently your students are " + Integer.toString((int) (score))
                     + "% satisfied and your annual funding reflects this. You have recieved £" + Integer.toString(money)
                     + " this year. Increase your student satisfaction to get more funding next year.";
         }
