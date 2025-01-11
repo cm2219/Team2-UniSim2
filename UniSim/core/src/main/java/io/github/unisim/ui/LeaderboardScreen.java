@@ -3,18 +3,24 @@ package io.github.unisim.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.unisim.GameState;
+import io.github.unisim.Leaderboard;
+
+import java.util.List;
 
 public class LeaderboardScreen implements Screen {
     private Stage stage;
     private Table table;
     private Skin skin;
     private TextButton backButton;
+    private Label topScoresLabel;
+    private Cell<TextButton> buttonCell;
+
+
+    private Leaderboard leaderboard;
 
     /**
      * Initializes the leaderboard screen with its components.
@@ -28,20 +34,48 @@ public class LeaderboardScreen implements Screen {
         table = new Table();
         skin = GameState.defaultSkin;
 
+        // Initialize the LeaderboardManager
+        leaderboard = Leaderboard.getInstance();
+
+        // Label to display the leaderboard
+        topScoresLabel = new Label("Top 5 Scores:\n", skin);
+
+        // Return to Main Menu button
         backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                // Switch to the Start Menu screen
                 GameState.currentScreen = GameState.startScreen;
             }
         });
 
-        table.setFillParent(true);
+        // Arrange UI components using the table layout
+        table.setFillParent(true); // Table fills the entire stage
         table.center();
-        table.add(backButton).center().width(200).height(60);
+        table.add(topScoresLabel).padBottom(20);
+        table.row();
+        buttonCell = table.add(backButton).width(200).height(60);
 
+        // Add the table to the stage
         stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
+
+        // Initial display of the leaderboard
+        updateLeaderboardDisplay();
+    }
+
+    /**
+     * Updates the leaderboard display with the latest top scores.
+     */
+    private void updateLeaderboardDisplay() {
+        StringBuilder formattedScores = new StringBuilder("Top 5 Scores:\n");
+        List<String> topScores = leaderboard.getFormattedTopScores();
+
+        for (String score : topScores) {
+            formattedScores.append(score).append("\n");
+        }
+
+        topScoresLabel.setText(formattedScores.toString());
     }
 
     /**
@@ -64,6 +98,7 @@ public class LeaderboardScreen implements Screen {
 
         stage.act(delta);
         stage.draw();
+        updateLeaderboardDisplay();
     }
 
     /**
