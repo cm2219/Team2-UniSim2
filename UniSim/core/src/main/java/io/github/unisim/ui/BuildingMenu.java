@@ -103,10 +103,18 @@ public class BuildingMenu {
     ));
 
     table = new Table();
-    // Add buldings to the table
+    // Add buildings to the table
     for (int i = 0; i < buildings.size(); i++) {
-      buildingImages.add(new Image(buildings.get(i).texture));
       final int buildingIndex = i;
+      Building building = buildings.get(i);
+
+      //Building Name Row
+      table.row();
+      Label nameLabel = new Label(building.name, new Skin(Gdx.files.internal("ui/uiskin.json")));
+      table.add(nameLabel).pad(10).align(Align.center);
+
+      //Building Image Row
+      buildingImages.add(new Image(buildings.get(i).texture));
       buildingImages.get(i).addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent e, float x, float y) {
@@ -128,8 +136,14 @@ public class BuildingMenu {
           }
         }
       });
-      table.add(buildingImages.get(i));
+      table.add(buildingImages.get(i)).pad(10).align(Align.center);
+
+      //Building Price Row
+      Label priceLabel = new Label("$" + building.price, new Skin(Gdx.files.internal("ui/uiskin.json")));
+      table.row();
+      table.add(priceLabel).pad(10).align(Align.center);
     }
+
 
     buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
 
@@ -146,9 +160,9 @@ public class BuildingMenu {
    */
   @SuppressWarnings("unchecked")
   public void resize(int width, int height) {
-    table.setBounds(0, 0, width, height * 0.1f);
-    bar.setBounds(0, 0, width, height * 0.1f);
-    buildingInfoTable.setBounds(0, height * 0.1f, width, height * 0.025f);
+    table.setBounds(0, 0, width, height * 0.2f);
+    bar.setBounds(0, 0, width, height * 0.2f);
+    buildingInfoTable.setBounds(0, height * 0.2f, width, height * 0.05f);
 
     // we must perform an unchecked type conversion here
     // this is acceptable as we know our table only contains instances of Actors

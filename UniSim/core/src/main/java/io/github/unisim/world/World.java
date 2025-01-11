@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.unisim.GameState;
+import io.github.unisim.PlayerBalance;
 import io.github.unisim.Point;
 import io.github.unisim.building.Building;
 import io.github.unisim.building.BuildingManager;
@@ -49,6 +50,7 @@ public class World {
   private Point mousePosInWorld;
   private Point btmLeft;
   private Point topRight;
+  private PlayerBalance balance;
   public Building selectedBuilding;
   public boolean selectedBuildingUpdated;
 
@@ -60,6 +62,7 @@ public class World {
     initIsometricTransform();
     buildingManager = new BuildingManager(isoTransform);
     selectedBuilding = null;
+    balance = new PlayerBalance(5000);
   }
 
   /**
@@ -109,7 +112,7 @@ public class World {
       btmLeft.x -= buildingSize.x / 2;
       btmLeft.y -= buildingSize.y / 2;
       topRight = new Point(btmLeft.x + buildingSize.x - 1, btmLeft.y + buildingSize.y - 1);
-      canBuild = buildingManager.isBuildable(btmLeft, topRight, getMapTiles());
+      canBuild = buildingManager.isBuildable(btmLeft, topRight, getMapTiles(), selectedBuilding, balance);
       if (selectedBuilding != null) {
         selectedBuilding.location = btmLeft;
       }
@@ -329,6 +332,10 @@ public class World {
     if (!canBuild) {
       return false;
     }
+
+    //Subtract building price from player balance
+    balance.updateBalance(-selectedBuilding.price);
+
     buildingManager.placeBuilding(
       new Building(
         selectedBuilding.texture, selectedBuilding.textureScale, selectedBuilding.textureOffset,
@@ -365,5 +372,6 @@ public class World {
     initIsometricTransform();
     buildingManager = new BuildingManager(isoTransform);
     selectedBuilding = null;
+    balance = new PlayerBalance(5000);
   }
 }
