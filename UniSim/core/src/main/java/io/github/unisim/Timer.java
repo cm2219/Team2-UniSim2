@@ -73,8 +73,8 @@ public class Timer {
   public String getRemainingTime() {
     // get the number of minutes and seconds from the total remaining time in
     // milliseconds.
-    int totalRemainingTime = (int) (initialTime * (remainingEvents - 1) + remainingTime);
-    int remainingMinutes = (int) ((totalRemainingTime + 1000) / 60_000);
+    int totalRemainingTime = (int) (initialTime * (remainingEvents) + remainingTime);
+    int remainingMinutes = (int) ((totalRemainingTime) / 60_000);
     int remainingSeconds = (int) Math.ceil(totalRemainingTime / 1000 - 60 * remainingMinutes);
 
     return formatNum(remainingMinutes) + ":" + formatNum(remainingSeconds);
