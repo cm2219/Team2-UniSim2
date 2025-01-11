@@ -24,7 +24,7 @@ public class GameScreen implements Screen {
     private BuildingMenu buildingMenu;
     private EventBox eventBox;
     private Timer timer;
-    private PlayerBalance playerBalance;
+    private PlayerBalance balance;
     private InputProcessor uiInputProcessor = new UiInputProcessor(stage);
     private InputProcessor worldInputProcessor = new WorldInputProcessor(world);
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -43,6 +43,7 @@ public class GameScreen implements Screen {
         infoBar = new InfoBar(stage, timer, world);
         buildingMenu = new BuildingMenu(stage, world);
         eventBox = new EventBox(stage, timer);
+        balance = new PlayerBalance(5000);
 
         inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
         inputMultiplexer.addProcessor(stage);
