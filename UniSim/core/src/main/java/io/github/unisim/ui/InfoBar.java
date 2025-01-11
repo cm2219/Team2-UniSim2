@@ -39,6 +39,10 @@ public class InfoBar {
   private Cell<Table> buildingCountersTableCell;
   private Cell[] buildingCounterCells;
   private World world;
+    private Label eventTitleLabel = new Label("", skin);
+    private Label eventDescriptionLabel = new Label("", skin);
+
+
   /**
    * Create a new infoBar and draws its' components onto the provided stage.
 
@@ -67,7 +71,15 @@ public class InfoBar {
     scoreLabelCell = infoTable.add(scoreLabel).align(Align.center);
     buildingCountersTableCell = infoTable.add(buildingCountersTable).expandX().align(Align.right);
 
-    // Pause button
+    //event labels to table
+      infoTable.row();
+      infoTable.add(eventTitleLabel).colspan(4).align(Align.left).padTop(10);
+      infoTable.row();
+      infoTable.add(eventDescriptionLabel).colspan(4).align(Align.left).padTop(5);
+
+
+
+      // Pause button
     pauseImage.addListener(new ClickListener() {
       @Override
       public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
@@ -93,6 +105,35 @@ public class InfoBar {
     stage.addActor(titleTable);
   }
 
+    /**
+     * Sets the event title in the InfoBar.
+     *
+     * @param title The title of the event.
+     */
+    public void setEventTitle(String title) {
+        eventTitleLabel.setText("Event: " + title);
+    }
+
+    /**
+     * Retrieves the current event title from the InfoBar.
+     *
+     * @return The current event title.
+     */
+    public String getEventTitle() {
+        return eventTitleLabel.getText().toString();
+    }
+
+    /**
+     * Sets the event description in the InfoBar.
+     *
+     * @param description The description of the event.
+     */
+    public void setEventDescription(String description) {
+        eventDescriptionLabel.setText(description);
+    }
+
+
+
   /**
    * Called when the UI needs to be updated, usually on every frame.
    */
@@ -116,30 +157,35 @@ public class InfoBar {
    * @param height - The enw height of the screen in pixels.
    */
   public void resize(int width, int height) {
-    bar.setBounds(0, height * 0.95f, width, height * 0.05f);
-    infoTable.setBounds(0, height * 0.95f, width, height * 0.05f);
-    titleTable.setBounds(0, height * 0.95f, width, height * 0.05f);
 
-    float counterTableWidth = height * 0.27f;
-    buildingCountersTableCell.width(counterTableWidth).height(height * 0.05f);
-    for (int i = 0; i < 4; i++) {
-      buildingCounterLabels[i].setFontScale(height * 0.0015f);
-      buildingCounterCells[i].width(counterTableWidth * 0.5f).height(height * 0.025f);
-    }
+      float infoBarHeight = height * 0.1f;
+      bar.setBounds(0, height - infoBarHeight, width, infoBarHeight);
+      infoTable.setBounds(0, height - infoBarHeight, width, infoBarHeight);
+      titleTable.setBounds(0, height - infoBarHeight, width, infoBarHeight);
 
-    timerLabel.setFontScale(height * 0.002f);
-    timerLabelCell.width(height * 0.08f).height(height * 0.05f);
-    timerLabelCell.padLeft(height * 0.005f);
-    scoreLabel.setFontScale(height * 0.002f);
-    scoreLabelCell.width(height * 0.04f).height(height * 0.05f);
-    scoreLabelCell.padLeft(Math.min(width, height * 2) * 0.14f);
-    pauseButtonCell.width(height * 0.03f).height(height * 0.03f)
-    .padLeft(height * 0.01f).padRight(height * 0.01f);
+      float counterTableWidth = infoBarHeight * 2.7f;
+      buildingCountersTableCell.width(counterTableWidth).height(infoBarHeight);
+      for (int i = 0; i < 4; i++) {
+          buildingCounterLabels[i].setFontScale(infoBarHeight * 0.015f); // Adjust font size
+          buildingCounterCells[i].width(counterTableWidth * 0.5f).height(infoBarHeight * 0.25f);
+      }
 
-    titleLabel.setFontScale(height * 0.003f);
+      timerLabel.setFontScale(infoBarHeight * 0.02f); // Adjust timer label font size
+      timerLabelCell.width(infoBarHeight * 0.8f).height(infoBarHeight);
+      timerLabelCell.padLeft(infoBarHeight * 0.05f);
+
+      scoreLabel.setFontScale(infoBarHeight * 0.02f); // Adjust score label font size
+      scoreLabelCell.width(infoBarHeight * 0.4f).height(infoBarHeight);
+      scoreLabelCell.padLeft(Math.min(width, infoBarHeight * 20) * 0.14f);
+
+      pauseButtonCell.width(infoBarHeight * 0.3f).height(infoBarHeight * 0.3f)
+          .padLeft(infoBarHeight * 0.1f).padRight(infoBarHeight * 0.1f);
+
+      titleLabel.setFontScale(infoBarHeight * 0.005f); // Adjust title label font size
   }
 
-  public void reset() {
+
+    public void reset() {
     pauseButtonCell.setActor(playImage);
   }
 }
