@@ -34,7 +34,7 @@ public class Event {
      * Odd-numbered events are triggered halfway through each year. The attributes
      * of these
      * events are randomly selected from a csv file: randomEvents.csv
-     * 
+     *
      * @param eventNumber - The current event number
      * @param score       - The user's current score
      */
@@ -43,8 +43,8 @@ public class Event {
         if (eventNumber == 0) {
             money = 0;
             points = 0;
-            title = "Tutorial title";
-            description = "Tutorial description";
+            title = "Tutorial";
+            description = "Welcome to your university, select a building from the bottom to place it. Be careful to manage funds";
         }
 
         else if (eventNumber % 2 == 0) {
@@ -94,7 +94,7 @@ public class Event {
 
     /**
      * Return the title of the event.
-     * 
+     *
      * @return - a string.
      */
     public String getEventTitle() {
@@ -103,7 +103,7 @@ public class Event {
 
     /**
      * Return the description of the event.
-     * 
+     *
      * @return - a string.
      */
     public String getEventDescription() {
@@ -112,7 +112,7 @@ public class Event {
 
     /**
      * Return the money value of the event.
-     * 
+     *
      * @return - an integer.
      */
     public int getEventMoney() {
@@ -121,7 +121,7 @@ public class Event {
 
     /**
      * Return the points value of the event.
-     * 
+     *
      * @return - a double between -1 and 1.
      */
     public double getEventPoints() {
