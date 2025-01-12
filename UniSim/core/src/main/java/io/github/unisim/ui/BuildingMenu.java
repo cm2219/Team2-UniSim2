@@ -209,7 +209,7 @@ public class BuildingMenu {
      */
     public void update() {
         if (GameState.gameOver) {
-            buildingInfoLabel.setText("Game Over!");
+            buildingInfoLabel.setText("");
         } else if (world.selectedBuilding == null) {
             buildingInfoLabel.setText("");
         }
