@@ -60,7 +60,7 @@ public class Event {
             Random rand = new Random();
             int randInt = rand.nextInt(10);
 
-            File file = new File("data/randomEvents.csv");
+            File file = new File("assets/randomEvents.csv");
 
             if (!file.exists()) {
                 System.out.println("CSV file not found: randomEvents.csv");
