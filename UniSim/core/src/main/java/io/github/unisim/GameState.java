@@ -52,6 +52,9 @@ public class GameState {
         if (satisfaction > MAX_SATISFACTION) {
             satisfaction = MAX_SATISFACTION;
         }
+        if (satisfaction < 0) {
+            satisfaction = 0;
+        }
         System.out.println("Previous Satisfaction: " + previousSatisfaction +
             ", Delta: " + delta +
             ", New Satisfaction: " + satisfaction);
