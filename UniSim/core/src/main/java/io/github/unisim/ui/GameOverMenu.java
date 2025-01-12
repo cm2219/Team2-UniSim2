@@ -39,6 +39,7 @@ public class GameOverMenu {
     private Label instructionLabel;
     private Label AchievementsLabel;
     private Label scoreLabel;
+    private Label titleLabel;
     private TextField nameInputField;         // Text field for player name input
     private Cell<TextButton> buttonCell;
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -61,6 +62,9 @@ public class GameOverMenu {
 
         // Initialize the LeaderboardManager
         leaderboard = Leaderboard.getInstance();
+
+        //Title label
+        titleLabel = new Label("Game Over!", skin);
 
         // Score label
         scoreLabel = new Label("Your final score: ", skin);
@@ -109,7 +113,7 @@ public class GameOverMenu {
         // Arrange UI components using the table layout
         table.setFillParent(true); // Table fills the entire stage
         table.center();
-        table.add(new Label("Game Over!", skin)).padBottom(20);
+        table.add(titleLabel).padBottom(20);
         table.row();
         table.add(scoreLabel).padBottom(20); // Display final score
         table.row();
@@ -143,6 +147,9 @@ public class GameOverMenu {
     private void calculateFinalScore() {
         score = GameState.satisfaction; // Retrieve satisfaction score
         finalScore = score + achievementTotal; // Combine satisfaction and achievement effects
+        if (finalScore < 0) {
+            finalScore = 0;
+        }
         System.out.println("Score: " + score + " Bonus: " + achievementTotal +
             " Final Score: " + finalScore); // Debug log for final score calculation
         StringBuilder formattedScore = new StringBuilder("Your Final Score: ");
@@ -217,9 +224,13 @@ public class GameOverMenu {
      */
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        table.setBounds(0, 0, width, height * 0.1f);
+        table.setBounds(0, height * 0.01f, width, height * 0.94f);
         bar.setBounds(0, 0, width, height * 0.2f);
         buttonCell.width(width * 0.3f).height(height * 0.1f);
+        titleLabel.setFontScale(height * 0.005f);
+        scoreLabel.setFontScale(height * 0.002f);
+        topScoresLabel.setFontScale(height * 0.002f);
+        AchievementsLabel.setFontScale(height * 0.002f);
     }
 
     /**
