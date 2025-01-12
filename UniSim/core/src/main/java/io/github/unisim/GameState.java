@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import io.github.unisim.ui.AchievementsScreen;
 
 
 /**
@@ -28,7 +27,6 @@ public class GameState {
     public static InputProcessor fullscreenInputProcessor = new FullscreenInputProcessor();
     public static Screen gameScreen = new GameScreen();
     public static Screen leaderboardScreen = new LeaderboardScreen();
-    public static Screen achievementsScreen = new AchievementsScreen();
     public static Screen startScreen = new StartMenuScreen();
     public static Screen currentScreen;
     // Create an unmodifiable set containing the IDs of all buildable tiles
