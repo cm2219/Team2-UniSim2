@@ -65,7 +65,7 @@ public class EventBox {
             titleLabel.setText(currentEvent.getEventTitle());
             descriptionLabel.setText(currentEvent.getEventDescription());
             moneyLabel.setText("Money: " + currentEvent.getEventMoney());
-            pointsLabel.setText("Satisfaction: " + currentEventNumber);
+            pointsLabel.setText("Satisfaction: " + currentEvent.getEventPoints());
 
             currentEventNumber = timer.getEventNumber();
             GameState.updateBalance((currentEvent.getEventMoney()));
