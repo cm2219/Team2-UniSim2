@@ -1,10 +1,10 @@
-It's Sunny Out,The good weather has everyone feeling happy!,0,0.05
-Alumni Donation,A wealthy ex-student has decided to gift you a hefty sum of money. Spend it well,20000,0.0
-Sport Team Wins,The University's sport team just won the National Championship. Everyone's spirits are high and you got some prize money too.,5000,0.15
-Groundbreaking New Study,One of your professors published a new study that changes the way we view their subject. Students are flocking to come listen to their lectures.,0,0.1
-Successful Exam Season,All of your students passed their exams. Everyone is celebrating!,0,0.15
-It's Raining,The miserable weather is affecting everyone's mood.,0,-0.05
-Building Damage,The roof to a lecture theatre has caved in! You need to pay to fix it and the construction work is unsightly.,-7000,-0.1
-The Heating Broke,The heating in the accomodation buildings has broken down. You were able to get a repair team out quickly so nobody is upset but it cost a lot of money to fix so quickly.,-10000,0.0
-Fresher's Flu,Fresher's flu is spreading again. Many students are too ill to go outside and are bored and lonely in their beds.,0,-0.15
-Teacher's Strike,Your staff have gone on strike! The students are upset because their essays haven't been marked.,0,-0.15
+It's Sunny Out,The good weather has everyone feeling happy!,0,5
+Alumni Donation,A wealthy ex-student has decided to gift you a hefty sum of money. Spend it well,5000,0
+Sport Team Wins,The University's sport team just won the National Championship. Everyone's spirits are high and you got some prize money too.,7500,10
+Groundbreaking New Study,One of your professors published a new study that changes the way we view their subject. Students are flocking to come listen to their lectures.,0,10
+Successful Exam Season,All of your students passed their exams. Everyone is celebrating!,0,10
+It's Raining,The miserable weather is affecting everyone's mood.,0,-5
+Building Damage,The roof to a lecture theatre has caved in! You need to pay to fix it and the construction work is unsightly.,-7000,-10
+The Heating Broke,The heating in the accomodation buildings has broken down. You were able to get a repair team out quickly so nobody is upset but it cost a lot of money to fix so quickly.,-2000,0
+Fresher's Flu,Fresher's flu is spreading again. Many students are too ill to go outside and are bored and lonely in their beds.,0,-15
+Teacher's Strike,Your staff have gone on strike! The students are upset because their essays haven't been marked.,0,-15
