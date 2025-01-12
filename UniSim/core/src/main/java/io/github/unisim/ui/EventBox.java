@@ -10,9 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import io.github.unisim.GameState;
 import io.github.unisim.Timer;
 import io.github.unisim.Event;
-import io.github.unisim.PlayerBalance;
-
-import static io.github.unisim.PlayerBalance.*;
 
 /**
  * Create a Title bar with basic info.
@@ -32,15 +29,15 @@ public class EventBox {
     private Cell<Label> pointsLabelCell;
     private int currentEventNumber;
     private Event currentEvent;
-    private PlayerBalance playerBalance;
 
     /**
      * Create a new eventBox and draws its' components onto the provided stage.
 
-//     * @param stage - The stage on which to draw the eventBox.
+     //     * @param stage - The stage on which to draw the eventBox.
      */
     public EventBox(Stage stage, Timer timer) {
         this.timer = timer;
+        currentEventNumber = 0;
 
         // Event Table
         titleLabelCell = eventTable.add(titleLabel);
@@ -71,7 +68,7 @@ public class EventBox {
             pointsLabel.setText("Satisfaction: " + currentEvent.getEventPoints());
 
             currentEventNumber = timer.getEventNumber();
-//            playerBalance.updateBalance(currentEvent.getEventMoney());
+            GameState.updateBalance((currentEvent.getEventMoney()));
             GameState.increaseSatisfaction(currentEvent.getEventPoints());
         }
     }
@@ -103,6 +100,10 @@ public class EventBox {
     }
 
     public void reset() {
-        titleLabel.setText("Title");
+        titleLabel.setText("Tutorial");
+        descriptionLabel.setText("Welcome to your university, select a building from the bottom to place it. Be careful to manage funds");
+        moneyLabel.setText("");
+        pointsLabel.setText("");
+        currentEventNumber = 0;
     }
 }

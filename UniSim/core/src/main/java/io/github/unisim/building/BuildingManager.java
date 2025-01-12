@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import io.github.unisim.GameState;
 import io.github.unisim.Point;
+import io.github.unisim.world.SatisfactionCalculator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +37,18 @@ public class BuildingManager {
      * @param tileLayer - A reference to the map layer containing all terrain tiles
      * @return - true if the region is made solely of buildable tiles, false otherwise
      */
-    public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer) {
+    public boolean isBuildable(Point btmLeft, Point topRight, TiledMapTileLayer tileLayer, Building building, int balance) {
         boolean buildable = true;
+
+        // Check if player balance is greater than building price
+        if (building != null) {
+            Integer buildCost = building.price;
+            int userBalance = GameState.balance;
+            if (userBalance < buildCost) {
+                buildable = false;
+            }
+        }
+
         // we iterate over each tile within the search region and check
         // for any non-buildable tiles.
         for (int x = btmLeft.x; x <= topRight.x && buildable; x++) {
@@ -58,14 +70,14 @@ public class BuildingManager {
         }
 
         // Next, iterate over the current buildings to see if any intersect the new building
-        for (Building building : buildings) {
-            // Use the seperating axis theorem to detect building overlap
-            if (!(building.location.x > topRight.x
-                || building.location.x + building.size.x - 1 < btmLeft.x
-                || building.location.y > topRight.y
-                || building.location.y + building.size.y - 1 < btmLeft.y)
+        for (Building newBuilding : buildings) {
+            // Use the separating axis theorem to detect building overlap
+            if (!(newBuilding.location.x > topRight.x
+                || newBuilding.location.x + newBuilding.size.x - 1 < btmLeft.x
+                || newBuilding.location.y > topRight.y
+                || newBuilding.location.y + newBuilding.size.y - 1 < btmLeft.y)
             ) {
-                if (building == previewBuilding) {
+                if (newBuilding == previewBuilding) {
                     continue;
                 }
                 buildable = false;
@@ -100,15 +112,19 @@ public class BuildingManager {
     /**
      * Handle placement of a building into the world by determining
      * the correct draw order and updating the building counters.
-
+     *
      * @param building - A reference to a building object to be placed
      * @return - The location in the buildings array that the building was placed at
      */
     public int placeBuilding(Building building) {
-        // Insert the building into the correct place in the arrayList to ensure it
-        // gets rendered in top-down order
-        // Start by calculating the 'height' values for the left and right corners of the new building
-        // where height is the taxi-cab distance from the top of the map
+        if (GameState.paused) {
+            return -1;
+        }
+        if (building == previewBuilding) {
+            return -1; // Ignore preview building
+        }
+
+        // The original placement logic remains unchanged
         int buildingHeightLeftSide = building.location.y - building.location.x;
         int buildingHeightRightSide = buildingHeightLeftSide + building.size.y - building.size.x + 1;
         Point leftCorner = building.location;
@@ -144,6 +160,7 @@ public class BuildingManager {
         }
         buildings.add(i, building);
         updateCounters(building);
+        SatisfactionCalculator.calculateAndUpdateSatisfaction(building, this);
         return i;
     }
 
@@ -157,11 +174,11 @@ public class BuildingManager {
         if (building == previewBuilding) {
             return;
         }
-        if (!buildingCounts.containsKey(building.type)) {
-            buildingCounts.put(building.type, 1);
-            return;
-        }
-        buildingCounts.put(building.type, buildingCounts.get(building.type) + 1);
+        buildingCounts.put(building.type, buildingCounts.getOrDefault(building.type, 0) + 1);
+        GameState.buildingCounts.put(building.type, buildingCounts.getOrDefault(building.type, 0) + 1);
+
+        // NEW TROUBLESHOOTING: Log counter updates
+        System.out.println("Updated counter for " + building.type + ": " + buildingCounts.get(building.type));
     }
 
     /**
@@ -172,11 +189,9 @@ public class BuildingManager {
      * @return - The number of buildings of that type that have been placed
      */
     public int getBuildingCount(BuildingType type) {
-        if (!buildingCounts.containsKey(type)) {
-            return 0;
-        }
-        return buildingCounts.get(type);
+        return buildingCounts.getOrDefault(type, 0);
     }
+
 
     /**
      * Sets the building to render as a 'preview' on the map prior to placement.
@@ -189,7 +204,7 @@ public class BuildingManager {
         }
         this.previewBuilding = previewBuilding;
         if (previewBuilding != null) {
-            placeBuilding(previewBuilding);
+            buildings.add(previewBuilding);
         }
     }
 
@@ -240,10 +255,13 @@ public class BuildingManager {
                 Math.pow(newBuilding.location.x - building.location.x, 2) +
                     Math.pow(newBuilding.location.y - building.location.y, 2)
             );
-            if (distance < nearestDistance) {
+            if (distance < nearestDistance && distance != 0) {
                 nearestDistance = distance;
             }
         }
-        return nearestDistance == Double.MAX_VALUE ? 50 : nearestDistance;
+        if (nearestDistance == Double.MAX_VALUE) {
+            return 50;
+        }
+        return nearestDistance;
     }
 }

@@ -7,7 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.unisim.GameState;
-import io.github.unisim.PlayerBalance;
+
 import io.github.unisim.Timer;
 import io.github.unisim.world.UiInputProcessor;
 import io.github.unisim.world.World;
@@ -24,7 +24,7 @@ public class GameScreen implements Screen {
     private BuildingMenu buildingMenu;
     private EventBox eventBox;
     private Timer timer;
-    private PlayerBalance playerBalance;
+
     private InputProcessor uiInputProcessor = new UiInputProcessor(stage);
     private InputProcessor worldInputProcessor = new WorldInputProcessor(world);
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();

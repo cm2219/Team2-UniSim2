@@ -26,157 +26,196 @@ import java.util.ArrayList;
  */
 @SuppressWarnings({"MemberName", "AbbreviationAsWordInName"})
 public class BuildingMenu {
-  private World world;
-  private ShapeActor bar = new ShapeActor(GameState.UISecondaryColour);
-  private Table table;
-  private ArrayList<Building> buildings = new ArrayList<>();
-  private ArrayList<Image> buildingImages = new ArrayList<>();
-  private Label buildingInfoLabel = new Label(
-      "", new Skin(Gdx.files.internal("ui/uiskin.json"))
-  );
-  private Table buildingInfoTable = new Table();
+    private Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+    private World world;
+    private ShapeActor bar = new ShapeActor(GameState.UISecondaryColour);
+    private Table nameTable;
+    private Table imageTable;
+    private Table priceTable;
+    private ArrayList<Building> buildings = new ArrayList<>();
+    private ArrayList<String> buildingNames = new ArrayList<>();
+    private ArrayList<Image> buildingImages = new ArrayList<>();
+    private ArrayList<Integer> buildingPrices = new ArrayList<>();
+    private Label buildingInfoLabel = new Label(
+        "", new Skin(Gdx.files.internal("ui/uiskin.json"))
+    );
+    private Table buildingInfoTable = new Table();
 
-  /**
-   * Create a Building Menu and attach its actors and components to the provided stage.
-   * Also handles drawing buildings and their flipped variants
+    /**
+     * Create a Building Menu and attach its actors and components to the provided stage.
+     * Also handles drawing buildings and their flipped variants
 
-   * @param stage - The stage on which to draw the menu.
-   */
-  public BuildingMenu(Stage stage, World world) {
-    this.world = world;
-    // Set building images and sizes
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/restaurant.png")),
-        0.01f,
-        new Vector2(0.35f, -0.9f),
-        new Point(),
-        new Point(3, 3),
-        false,
-        BuildingType.EATING,
-        "Canteen",
-        1000
-    ));
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/library.png")),
-        0.0075f,
-        new Vector2(1.8f, -4.6f),
-        new Point(),
-        new Point(20, 12),
-        false,
-        BuildingType.LEARNING,
-        "Library",
-        1500
-    ));
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/basketballCourt.png")),
-        0.0025f,
-        new Vector2(1f, -2.4f),
-        new Point(),
-        new Point(6, 9),
-        false,
-        BuildingType.RECREATION,
-        "Basketball Court",
-        500
-    ));
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/studentHousing.png")),
-        0.108f,
-        new Vector2(1.4f, -2.8f),
-        new Point(),
-        new Point(11, 11),
-        false,
-        BuildingType.SLEEPING,
-        "Student Accomodation",
-        750
-    ));
+     * @param stage - The stage on which to draw the menu.
+     */
+    public BuildingMenu(Stage stage, World world) {
+        this.world = world;
+        // Set building images and sizes
+        buildings.add(new Building(
+            new Texture(Gdx.files.internal("buildings/restaurant.png")),
+            0.01f,
+            new Vector2(0.35f, -0.9f),
+            new Point(),
+            new Point(3, 3),
+            false,
+            BuildingType.EATING,
+            "Canteen",
+            1000
+        ));
+        buildings.add(new Building(
+            new Texture(Gdx.files.internal("buildings/library.png")),
+            0.0075f,
+            new Vector2(1.8f, -4.6f),
+            new Point(),
+            new Point(20, 12),
+            false,
+            BuildingType.LEARNING,
+            "Library",
+            1500
+        ));
+        buildings.add(new Building(
+            new Texture(Gdx.files.internal("buildings/basketballCourt.png")),
+            0.0025f,
+            new Vector2(1f, -2.4f),
+            new Point(),
+            new Point(6, 9),
+            false,
+            BuildingType.RECREATION,
+            "Basketball Court",
+            500
+        ));
+        buildings.add(new Building(
+            new Texture(Gdx.files.internal("buildings/studentHousing.png")),
+            0.108f,
+            new Vector2(1.4f, -2.8f),
+            new Point(),
+            new Point(11, 11),
+            false,
+            BuildingType.SLEEPING,
+            "Accomodation",
+            750
+        ));
 
-    buildings.add(new Building(
-        new Texture(Gdx.files.internal("buildings/swimmingPool.png")),
-        0.0025f,
-        new Vector2(1f, -2.4f),
-        new Point(),
-        new Point(6, 9),
-        false,
-        BuildingType.RECREATION,
-        "Swimming Pool",
-        2000
-    ));
+        buildings.add(new Building(
+            new Texture(Gdx.files.internal("buildings/swimmingPool.png")),
+            0.0025f,
+            new Vector2(1f, -2.4f),
+            new Point(),
+            new Point(6, 9),
+            false,
+            BuildingType.RECREATION,
+            "Pool",
+            2000
+        ));
 
-    table = new Table();
-    // Add buldings to the table
-    for (int i = 0; i < buildings.size(); i++) {
-      buildingImages.add(new Image(buildings.get(i).texture));
-      final int buildingIndex = i;
-      buildingImages.get(i).addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent e, float x, float y) {
-          if (GameState.paused) {
-                return;
-          }
-          if (world.selectedBuilding == buildings.get(buildingIndex)) {
-            world.selectedBuilding = null;
-          } else {
-            world.selectedBuilding = buildings.get(buildingIndex);
-            buildingInfoLabel.setText(world.selectedBuilding.name + " - Press 'R' to rotate");
-            if (world.selectedBuilding.flipped) {
-              world.selectedBuilding.flipped = false;
-              int temp = world.selectedBuilding.size.x;
-              world.selectedBuilding.size.x = world.selectedBuilding.size.y;
-              world.selectedBuilding.size.y = temp;
-              world.selectedBuildingUpdated = true;
-            }
-          }
+
+        nameTable = new Table();
+        // Add buildings to the imageTable
+        for (int i = 0; i < buildings.size(); i++) {
+
+            //Building Name Row
+            Label buildingName = new Label(buildings.get(i).name, skin);
+            nameTable.add(buildingName);
         }
-      });
-      table.add(buildingImages.get(i));
+
+        imageTable = new Table();
+        // Add buildings to the imageTable
+        for (int i = 0; i < buildings.size(); i++) {
+            final int buildingIndex = i;
+
+            //Building Image Row
+            buildingImages.add(new Image(buildings.get(i).texture));
+            buildingImages.get(i).addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent e, float x, float y) {
+                    if (GameState.paused) {
+                        return;
+                    }
+                    if (world.selectedBuilding == buildings.get(buildingIndex)) {
+                        world.selectedBuilding = null;
+                    } else {
+                        world.selectedBuilding = buildings.get(buildingIndex);
+                        buildingInfoLabel.setText(world.selectedBuilding.name + " - Press 'R' to rotate");
+                        if (world.selectedBuilding.flipped) {
+                            world.selectedBuilding.flipped = false;
+                            int temp = world.selectedBuilding.size.x;
+                            world.selectedBuilding.size.x = world.selectedBuilding.size.y;
+                            world.selectedBuilding.size.y = temp;
+                            world.selectedBuildingUpdated = true;
+                        }
+                    }
+                }
+            });
+            imageTable.add(buildingImages.get(i));
+
+        }
+        priceTable = new Table();
+        // Add buildings to the imageTable
+        for (int j = 0; j < buildings.size(); j++) {
+
+            //Building Name Row
+            Label buildingPrice = new Label("$" + buildings.get(j).price, skin);
+            priceTable.add(buildingPrice);
+        }
+
+
+        buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
+
+        stage.addActor(bar);
+        stage.addActor(nameTable);
+        stage.addActor(imageTable);
+        stage.addActor(priceTable);
+        stage.addActor(buildingInfoTable);
     }
 
-    buildingInfoTable.add(buildingInfoLabel).expandX().align(Align.center);
+    /**
+     * Called when the window is resized, scales the building menu images with the window size.
 
-    stage.addActor(bar);
-    stage.addActor(table);
-    stage.addActor(buildingInfoTable);
-  }
+     * @param width - The new width of the window in pixels
+     * @param height - The new height of the window in pixels
+     */
+    @SuppressWarnings("unchecked")
+    public void resize(int width, int height) {
+        nameTable.setBounds(0, height * 0.13f, width, height * 0.05f);
+        imageTable.setBounds(0, height * 0.07f, width, height * 0.05f);
+        priceTable.setBounds(0, 0, width, height * 0.05f);
+        bar.setBounds(0, 0, width, height * 0.2f);
+        buildingInfoTable.setBounds(0, height * 0.2f, width, height * 0.05f);
 
-  /**
-   * Called when the window is resized, scales the building menu images with the window size.
+        for (Cell nameTableCell : nameTable.getCells()) {
+            nameTableCell.width(width * 0.075f).align(Align.center).padLeft(0.03f * width);
+        }
 
-   * @param width - The new width of the window in pixels
-   * @param height - The new height of the window in pixels
-   */
-  @SuppressWarnings("unchecked")
-  public void resize(int width, int height) {
-    table.setBounds(0, 0, width, height * 0.1f);
-    bar.setBounds(0, 0, width, height * 0.1f);
-    buildingInfoTable.setBounds(0, height * 0.1f, width, height * 0.025f);
+        for (Cell priceTableCell : priceTable.getCells()) {
+            priceTableCell.width(width * 0.075f).align(Align.center).padLeft(0.03f * width);;
+        }
 
-    // we must perform an unchecked type conversion here
-    // this is acceptable as we know our table only contains instances of Actors
-    for (Cell<Actor> cell : table.getCells()) {
-      Image buildingImage = (Image) (cell.getActor());
-      Vector2 textureSize = new Vector2(buildingImage.getWidth(), buildingImage.getHeight());
-      cell.width(
-          height * 0.1f * (textureSize.x < textureSize.y ? textureSize.x / textureSize.y : 1)
-      ).height(
-          height * 0.1f * (textureSize.y < textureSize.x ? textureSize.y / textureSize.x : 1)
-      );
+        // we must perform an unchecked type conversion here
+        // this is acceptable as we know our imageTable only contains instances of Actors
+        for (Cell<Actor> cell : imageTable.getCells()) {
+            Image buildingImage = (Image) (cell.getActor());
+            Vector2 textureSize = new Vector2(buildingImage.getWidth(), buildingImage.getHeight());
+            cell.width(
+                height * 0.1f * (textureSize.x < textureSize.y ? textureSize.x / textureSize.y : 1)
+            ).height(
+                height * 0.1f * (textureSize.y < textureSize.x ? textureSize.y / textureSize.x : 1)
+            ).pad((0.08f * width) - (height * 0.1f * (textureSize.x < textureSize.y ? textureSize.x / textureSize.y : 1))).align(Align.center);
+        }
+
+        buildingInfoLabel.setFontScale(height * 0.0025f);
     }
 
-    buildingInfoLabel.setFontScale(height * 0.0015f);
-  }
-
-  /**
-   * Called when the building menu needs to be redrawn with new values in the labels.
-   */
-  public void update() {
-    if (GameState.gameOver) {
-      buildingInfoLabel.setText("Game Over!");
-    } else if (world.selectedBuilding == null) {
-      buildingInfoLabel.setText("");
+    /**
+     * Called when the building menu needs to be redrawn with new values in the labels.
+     */
+    public void update() {
+        if (GameState.gameOver) {
+            buildingInfoLabel.setText("");
+        } else if (world.selectedBuilding == null) {
+            buildingInfoLabel.setText("");
+        }
     }
-  }
 
-  public void reset() {
-    buildingInfoLabel.setText("");
-  }
+    public void reset() {
+        buildingInfoLabel.setText("");
+    }
 }

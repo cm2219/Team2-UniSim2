@@ -17,89 +17,90 @@ import io.github.unisim.GameState;
  * or access the settings menu.
  */
 public class StartMenuScreen implements Screen {
-  private Stage stage;
-  private Table table;
-  private Skin skin;
-  private TextButton playButton;
-  private TextButton settingsButton;
-  private InputMultiplexer inputMultiplexer = new InputMultiplexer();
+    private Stage stage;
+    private Table table;
+    private Skin skin;
+    private TextButton playButton;
+    private TextButton leaderboardButton;
+    private InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
-  /**
-   * Create a new StartMenuScreen and draw the initial UI layout.
-   */
-  public StartMenuScreen() {
-    stage = new Stage();
-    table = new Table();
-    skin = GameState.defaultSkin;
+    /**
+     * Create a new StartMenuScreen and draw the initial UI layout.
+     */
+    public StartMenuScreen() {
+        stage = new Stage();
+        table = new Table();
+        skin = GameState.defaultSkin;
 
-    // Play button
-    playButton = new TextButton("Play", skin);
-    playButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-        // Switch to the game screen
-        GameState.currentScreen = GameState.gameScreen;
-      }
-    });
+        // Play button
+        playButton = new TextButton("Play", skin);
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                // Switch to the game screen
+                GameState.currentScreen = new GameScreen();
+            }
+        });
 
-    // Settings button
-    settingsButton = new TextButton("Settings", skin);
-    settingsButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-        // Switch to the settings screen
-        GameState.currentScreen = GameState.settingScreen;
-      }
-    });
 
-    // Add UI elements to the stage
-    table.setFillParent(true);
-    table.center().center();
-    table.pad(100, 100, 100, 100);
-    table.add(playButton).center().width(250).height(100).padBottom(10);
-    table.row();
-    table.add(settingsButton).center().width(250).height(67);
-    stage.addActor(table);
+        // Leaderboard button
+        leaderboardButton = new TextButton("Leaderboard", skin);
+        leaderboardButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                // Switch to the leaderboard screen
+                GameState.currentScreen = GameState.leaderboardScreen;
+            }
+        });
 
-    inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
-    inputMultiplexer.addProcessor(stage);
-  }
+        // Add UI elements to the stage
+        table.setFillParent(true);
+        table.center().center();
+        table.pad(100, 100, 100, 100);
+        table.add(playButton).center().width(250).height(100).padBottom(10);
+        table.row();
+        table.add(leaderboardButton).center().width(250).height(67);
+        stage.addActor(table);
 
-  @Override
-  public void show() {
-  }
+        inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
+        inputMultiplexer.addProcessor(stage);
+    }
 
-  @Override
-  public void render(float delta) {
-    // Clear the screen
-    ScreenUtils.clear(GameState.UISecondaryColour);
+    @Override
+    public void show() {
+    }
 
-    // Draw the stage containing buttons
-    stage.act(delta);
-    stage.draw();
-  }
+    @Override
+    public void render(float delta) {
+        // Clear the screen
+        ScreenUtils.clear(GameState.UISecondaryColour);
 
-  @Override
-  public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
-  }
+        // Draw the stage containing buttons
+        stage.act(delta);
+        stage.draw();
+    }
 
-  @Override
-  public void pause() {
-  }
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
 
-  @Override
-  public void resume() {
-    Gdx.input.setInputProcessor(inputMultiplexer);
-  }
+    @Override
+    public void pause() {
+    }
 
-  @Override
-  public void hide() {
-  }
+    @Override
+    public void resume() {
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
 
-  @Override
-  public void dispose() {
-    stage.dispose();
-    skin.dispose();
-  }
+    @Override
+    public void hide() {
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+    }
 }
