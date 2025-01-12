@@ -35,7 +35,6 @@ public class Main extends Game {
     }
     ((FullscreenInputProcessor) GameState.fullscreenInputProcessor).resize(width, height);
     GameState.gameScreen.resize(width, height);
-    GameState.settingScreen.resize(width, height);
     GameState.startScreen.resize(width, height);
   }
 }

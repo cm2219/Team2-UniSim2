@@ -6,29 +6,50 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.TreeMap;
-import io.github.unisim.building.BuildingManager;
 import io.github.unisim.building.BuildingType;
-import io.github.unisim.PlayerBalance;
+import io.github.unisim.ui.InfoBar;
 import io.github.unisim.world.SatisfactionCalculator;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Achievements {
-    private static class AchievementData {
-        String description;
-        boolean achieved;
-        int effect;
+    private static Achievements instance;
+    public static class AchievementData {
+        public String description;
+        public boolean achieved;
+        public int effect;
+        private static Map<String, Boolean> achievedAchievements = new HashMap<>();
+
+        public static boolean isAchieved(String title) {
+            return achievedAchievements.getOrDefault(title, false);
+        }
+
+        public static void unlockAchievement(String title) {
+            if (!achievedAchievements.containsKey(title)) {
+                achievedAchievements.put(title, true);
+            }
+        }
 
         public AchievementData(String description, boolean achieved, int effect) {
             this.description = description;
             this.achieved = achieved;
             this.effect = effect;
         }
+
     }
 
-    private final TreeMap<String, AchievementData> achievements;
+    public final TreeMap<String, AchievementData> achievements;
 
     public Achievements() {
-        this.achievements = new TreeMap<>();
+        achievements = new TreeMap<>();
         initializeDefaultAchievements();
+    }
+    //instance access
+    public static Achievements getInstance(){
+        if (instance == null){
+            instance = new Achievements();
+        }
+        return instance;
     }
 
     private void initializeDefaultAchievements() {
@@ -54,16 +75,30 @@ public class Achievements {
                 true,  // Mark as achieved
                 current.effect
             ));
-            System.out.println("Achievement unlocked: " + title);
+//            System.out.println("Achievement unlocked: " + title);  // Log achievement unlock to the console
         }
     }
 
+    //Method to check all achievements
+    public void checkAllAchievements() {
+        checkMasterBuilder();
+        checkScoreAchievements();
+        checkMoneyBalance();
+    }
+
     // Method to check if all building types have been placed
-    public void checkMasterBuilder(BuildingManager buildingManager) {
-        boolean hasEating = buildingManager.getBuildingCount(BuildingType.EATING) > 0;
-        boolean hasLearning = buildingManager.getBuildingCount(BuildingType.LEARNING) > 0;
-        boolean hasRecreation = buildingManager.getBuildingCount(BuildingType.RECREATION) > 0;
-        boolean hasSleeping = buildingManager.getBuildingCount(BuildingType.SLEEPING) > 0;
+    public void checkMasterBuilder() {
+        boolean hasEating = GameState.buildingCounts.getOrDefault(BuildingType.EATING, 0) > 0;
+        boolean hasLearning = GameState.buildingCounts.getOrDefault(BuildingType.LEARNING, 0) > 0;
+        boolean hasRecreation = GameState.buildingCounts.getOrDefault(BuildingType.RECREATION, 0) > 0;
+        boolean hasSleeping = GameState.buildingCounts.getOrDefault(BuildingType.SLEEPING, 0) > 0;
+
+        ///trouble shooting
+//        System.out.println("Building counts:");
+//        System.out.println("Eating: " + hasEating);
+//        System.out.println("Learning: " + hasLearning);
+//        System.out.println("Recreation: " + hasRecreation);
+//        System.out.println("Sleeping: " + hasSleeping);
 
         if (hasEating && hasLearning && hasRecreation && hasSleeping) {
             completeAchievement("Master Builder");
@@ -72,19 +107,22 @@ public class Achievements {
 
     // Method to check score-based achievements
     public void checkScoreAchievements() {
-        double satisfactionScore = SatisfactionCalculator.getSatisfaction();
 
-        if (satisfactionScore >= 80.0) {
-            completeAchievement("High Scorer");
-        }
-        if (satisfactionScore < 10.0) {
-            completeAchievement("Rock Bottom");
+        if (GameState.gameOver == true) {
+            double satisfactionScore = GameState.satisfaction;
+
+            if (satisfactionScore >= 80.0) {
+                completeAchievement("High Scorer");
+            }
+            if (satisfactionScore < 10.0) {
+                completeAchievement("Rock Bottom");
+            }
         }
     }
 
-    //Check balance related achievements.
-    public void checkMoneyBalance(PlayerBalance playerBalance) {
-        if (playerBalance.getBalance() == 0) {
+    //Check balance related achievements. Add if game over
+    public void checkMoneyBalance() {
+        if (GameState.balance == 0) {
             completeAchievement("Perfect Balance");
         }
     }
@@ -169,4 +207,43 @@ public class Achievements {
                 entry.getValue().effect);
         }
     }
+    /**
+     * to calculate total value effect of achievements
+     *
+     */
+    public int calculateAchievementEffects() {
+        int totalEffect = 0;
+
+        for (var entry : achievements.entrySet()) {
+            if (entry.getValue().achieved) {
+                totalEffect += entry.getValue().effect;
+            }
+        }
+        System.out.println(totalEffect);
+        return totalEffect;
+    }
+
+    //to rerturn achievements maap
+    public TreeMap<String, AchievementData> getAchievements(){
+        return achievements;
+    }
+
+
+    //return achievement details for gameover screen
+    public TreeMap<String, String> getAchievementData() {
+        TreeMap<String, String> details = new TreeMap<>();
+        for (var entry : achievements.entrySet()) {
+            var data = entry.getValue();
+            String status = data.achieved ? "unlocked" : "locked";
+            String detail = String.format("Title: %s, Description: %s, Effect: %d, Status: %s",
+                entry.getKey(), data.description, data.effect, status);
+            details.put(entry.getKey(), detail);
+        }
+        return details;
+    }
+
+
+
+
+
 }
