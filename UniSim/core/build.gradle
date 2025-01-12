@@ -20,6 +20,7 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:5.11.0'
 }
 
+// borrowed from junit website
 test {
   useJUnitPlatform()
 
@@ -30,11 +31,13 @@ test {
     html.required.set(true)
     junitXml.required.set(true)
   }
-  finalizedBy jacocoTestReport // report is always generated after tests run
+  // report is always generated after tests run
+  finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-  dependsOn test // tests are required to run before generating the report
+  // tests are required to run before generating the report
+  dependsOn test
   reports {
     html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
   }
