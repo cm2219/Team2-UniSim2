@@ -13,6 +13,6 @@ public class EventTest {
     @Test
     void testEvenEventsAddFunding() {
         Event e = new Event(2, 0);
-        assertTrue(e.getEventDescription().startsWith("Funding"));
+        assertTrue(e.getEventTitle().startsWith("Funding"));
     }
 }
