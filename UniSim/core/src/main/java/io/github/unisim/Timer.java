@@ -25,6 +25,7 @@ public class Timer {
     hasFinished = false;
     this.initialEvents = initialEvents;
     remainingEvents = initialEvents;
+    eventNumber = 0;
   }
 
   /**

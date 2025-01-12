@@ -1,5 +1,9 @@
 package io.github.unisim.ui;
+
 import io.github.unisim.Leaderboard;
+import io.github.unisim.Achievements;
+import io.github.unisim.building.BuildingManager;
+import io.github.unisim.world.SatisfactionCalculator;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.unisim.GameState;
+import io.github.unisim.world.World;
 
 import java.util.List;
 
@@ -23,34 +28,46 @@ import java.util.List;
  * - Displays the top 5 scores.
  */
 public class GameOverMenu {
-    private Stage stage;                      
-    private Skin skin;                        
+    private World world = new World();
+    private Stage stage;
+    private Skin skin;
     private ShapeActor bar = new ShapeActor(GameState.UISecondaryColour);
-    private Table table;                      
-    private TextButton saveScoreButton;       
-    private TextButton mainMenuButton;        
-    private Label topScoresLabel;             
-    private Label instructionLabel;           
+    private Table table;
+    private TextButton saveScoreButton;
+    private TextButton mainMenuButton;
+    private Label topScoresLabel;
+    private Label instructionLabel;
+    private Label AchievementsLabel;
+    private Label scoreLabel;
+    private Label titleLabel;
     private TextField nameInputField;         // Text field for player name input
     private Cell<TextButton> buttonCell;
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
-
     private Leaderboard leaderboard; // Manages leaderboard operations.
-    private int finalScore;                  // Player's final score
+    private SatisfactionCalculator satisfactionCalculator; // Calculates satisfaction score
+    private Achievements achievements = new Achievements(); // Manages achievements
+    private int score; // Player's satisfaction score
+    private int achievementTotal; // Total points from unlocked achievements
+    private int finalScore; // Player's final score
 
     /**
-     * Creates a new GameOverMenu, allowing the player to input their name and view the leaderboard.
-     *
-     * @param finalScore The player's final score to save.
+     * Constructor for GameOverMenu.
+     * - Initializes UI components and calculates the final score.
      */
     public GameOverMenu() {
-        this.finalScore = 0; //placeholder
+
         stage = new Stage(new ScreenViewport());
         table = new Table();
         skin = GameState.defaultSkin;
 
         // Initialize the LeaderboardManager
         leaderboard = Leaderboard.getInstance();
+
+        //Title label
+        titleLabel = new Label("Game Over!", skin);
+
+        // Score label
+        scoreLabel = new Label("Your final score: ", skin);
 
         // Instruction label
         instructionLabel = new Label("Enter your name to save your score:", skin);
@@ -66,9 +83,9 @@ public class GameOverMenu {
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 String playerName = nameInputField.getText().trim();
                 if (!playerName.isEmpty()) {
-                    leaderboard.updateScores(finalScore, playerName);
-                    leaderboard.toCsvFile();
-                    updateLeaderboardDisplay();
+                    leaderboard.updateScores(finalScore, playerName); // Save the score to the leaderboard
+                    leaderboard.toCsvFile(); // Save leaderboard to a CSV file
+                    updateLeaderboardDisplay(); // Update the leaderboard display
                     instructionLabel.setText("Score saved!"); // Feedback to player
                 } else {
                     instructionLabel.setText("Name cannot be empty. Try again.");
@@ -79,12 +96,16 @@ public class GameOverMenu {
         // Label to display the leaderboard
         topScoresLabel = new Label("Top 5 Scores:\n", skin);
 
+        // Label to display achievements
+        AchievementsLabel = new Label("Unlocked Achievements:\n", skin);
+
         // Return to Main Menu button
         mainMenuButton = new TextButton("Return to Main Menu", skin);
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 // Switch to the Start Menu screen
+                GameState.resetGameValues();
                 GameState.currentScreen = GameState.startScreen;
             }
         });
@@ -92,9 +113,9 @@ public class GameOverMenu {
         // Arrange UI components using the table layout
         table.setFillParent(true); // Table fills the entire stage
         table.center();
-        table.add(new Label("Game Over!", skin)).padBottom(20);
+        table.add(titleLabel).padBottom(20);
         table.row();
-        table.add(new Label("Your Final Score: " + finalScore, skin)).padBottom(20);
+        table.add(scoreLabel).padBottom(20); // Display final score
         table.row();
         table.add(instructionLabel).padBottom(10);
         table.row();
@@ -103,6 +124,8 @@ public class GameOverMenu {
         table.add(saveScoreButton).width(200).height(50).padBottom(20);
         table.row();
         table.add(topScoresLabel).padBottom(20);
+        table.row();
+        table.add(AchievementsLabel).padBottom(20);
         table.row();
         buttonCell = table.add(mainMenuButton).width(200).height(60);
 
@@ -114,8 +137,56 @@ public class GameOverMenu {
         inputMultiplexer.addProcessor(GameState.fullscreenInputProcessor);
         inputMultiplexer.addProcessor(stage);
 
-        // Initial display of the leaderboard
+        // Initial display of the leaderboard and achievements
         updateLeaderboardDisplay();
+    }
+
+    /**
+     * Calculates the final score by combining satisfaction and achievements.
+     */
+    private void calculateFinalScore() {
+        score = GameState.satisfaction; // Retrieve satisfaction score
+        finalScore = score + achievementTotal; // Combine satisfaction and achievement effects
+        if (finalScore < 0) {
+            finalScore = 0;
+        }
+        System.out.println("Score: " + score + " Bonus: " + achievementTotal +
+            " Final Score: " + finalScore); // Debug log for final score calculation
+        StringBuilder formattedScore = new StringBuilder("Your Final Score: ");
+        formattedScore.append(finalScore);
+        scoreLabel.setText(formattedScore.toString());
+    }
+
+    /**
+     * Updates the achievements display with the unlocked achievements.
+     */
+    private void updateAchievementsDisplay() {
+        achievements = new Achievements();
+        achievements.checkAllAchievements();
+        StringBuilder formattedAchievements = new StringBuilder("Unlocked Achievements:\n");
+        boolean achievementUnlocked = false; // Track if any achievements are unlocked.
+
+        for (var entry : achievements.getAchievements().entrySet()) { // Iterate through achievements
+//            System.out.println("test");
+            if (entry.getValue().achieved) { // Check if achievement is unlocked
+                formattedAchievements.append(entry.getKey())
+                    .append(": ")
+                    .append(entry.getValue().description)
+                    .append(" (")
+                    .append(entry.getValue().effect)
+                    .append(" points)\n");
+                // Debug log unlocked achievements
+//                System.out.println("Achievement Unlocked: " + entry.getKey() + " - " + entry.getValue().description);
+                achievementUnlocked = true; // Mark that at least one achievement is unlocked.
+            }
+        }
+
+        // If no achievements are unlocked, display a specific message.
+        if (!achievementUnlocked) {
+            formattedAchievements.append("No achievements to display!\n");
+        }
+        achievementTotal = achievements.calculateAchievementEffects();
+        AchievementsLabel.setText(formattedAchievements.toString()); // Updates achievements label
     }
 
     /**
@@ -140,6 +211,9 @@ public class GameOverMenu {
     public void render(float delta) {
         stage.act(delta);
         stage.draw();
+        updateAchievementsDisplay();
+        calculateFinalScore();
+
     }
 
     /**
@@ -150,9 +224,13 @@ public class GameOverMenu {
      */
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        table.setBounds(0, 0, width, height * 0.1f);
-        bar.setBounds(0, 0, width, height * 0.1f);
+        table.setBounds(0, height * 0.01f, width, height * 0.94f);
+        bar.setBounds(0, 0, width, height * 0.2f);
         buttonCell.width(width * 0.3f).height(height * 0.1f);
+        titleLabel.setFontScale(height * 0.005f);
+        scoreLabel.setFontScale(height * 0.002f);
+        topScoresLabel.setFontScale(height * 0.002f);
+        AchievementsLabel.setFontScale(height * 0.002f);
     }
 
     /**
@@ -164,4 +242,5 @@ public class GameOverMenu {
         return inputMultiplexer;
     }
 }
+
 

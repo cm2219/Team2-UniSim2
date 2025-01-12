@@ -52,15 +52,15 @@ public class Event {
             points = 0;
             title = "Funding for year " + Integer.toString(eventNumber / 2 + 1);
             description = "Currently your students are " + Integer.toString((int) (score))
-                    + "% satisfied and your annual funding reflects this. You have recieved £" + Integer.toString(money)
-                    + " this year. Increase your student satisfaction to get more funding next year.";
+                + "% satisfied and your annual funding reflects this. You have received $" + Integer.toString(money)
+                + " this year. Increase your student satisfaction to get more funding next year.";
         }
 
         else {
             Random rand = new Random();
             int randInt = rand.nextInt(10);
 
-            File file = new File("randomEvents.csv");
+            File file = new File("data/randomEvents.csv");
 
             if (!file.exists()) {
                 System.out.println("CSV file not found: randomEvents.csv");

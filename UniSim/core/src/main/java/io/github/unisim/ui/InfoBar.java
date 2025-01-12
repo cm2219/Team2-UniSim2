@@ -25,7 +25,7 @@ public class InfoBar {
     private Table buildingCountersTable = new Table();
     private Label[] buildingCounterLabels = new Label[4];
     private Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-    private Label scoreLabel = new Label("86%", skin);
+    private Label scoreLabel = new Label(GameState.satisfaction + "%", skin);
     private Label titleLabel = new Label("UniSim", skin);
     private Label timerLabel;
     private Texture pauseTexture = new Texture("ui/pause.png");
@@ -39,6 +39,13 @@ public class InfoBar {
     private Cell<Table> buildingCountersTableCell;
     private Cell[] buildingCounterCells;
     private World world;
+    //Implement money Imports
+    private Label balanceLabel = new Label(GameState.balance + "", skin);
+    private Texture moneyTexture = new Texture("ui/money.png");
+    private Image moneyIcon = new Image(moneyTexture);
+    private Cell<Label> balanceCell;
+    private Cell<Image> moneyIconCell;
+
     /**
      * Create a new infoBar and draws its' components onto the provided stage.
 
@@ -66,6 +73,10 @@ public class InfoBar {
         timerLabelCell = infoTable.add(timerLabel).align(Align.center);
         scoreLabelCell = infoTable.add(scoreLabel).align(Align.center);
         buildingCountersTableCell = infoTable.add(buildingCountersTable).expandX().align(Align.right);
+
+        //Player Balance
+        moneyIconCell = infoTable.add(moneyIcon).align(Align.center);
+        balanceCell = infoTable.add(balanceLabel).align(Align.center);
 
         // Pause button
         pauseImage.addListener(new ClickListener() {
@@ -107,6 +118,11 @@ public class InfoBar {
         buildingCounterLabels[3].setText("Sleeping: "
             + Integer.toString(world.getBuildingCount(BuildingType.SLEEPING)));
         pauseButtonCell.setActor(GameState.paused ? playImage : pauseImage);
+        balanceLabel.setText(GameState.balance);
+
+        int satisfactionPercentage = (int) ((GameState.satisfaction / (float) GameState.MAX_SATISFACTION) * 100);
+        scoreLabel.setText(satisfactionPercentage + "%");
+
     }
 
     /**
@@ -137,6 +153,12 @@ public class InfoBar {
             .padLeft(height * 0.01f).padRight(height * 0.01f);
 
         titleLabel.setFontScale(height * 0.003f);
+
+        moneyIconCell.width(height * 0.03f).height(height * 0.03f)
+            .padLeft(height * 0.01f);
+        balanceCell.width(height * 0.08f).height(height * 0.05f)
+            .padLeft(height * 0.005f);
+        balanceLabel.setFontScale(height * 0.002f);
     }
 
     public void reset() {
