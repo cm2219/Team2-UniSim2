@@ -53,14 +53,17 @@ public class Achievements {
     }
 
     private void initializeDefaultAchievements() {
-        achievements.put("Perfect Balance",
-            new AchievementData("Finish the game with exactly $0", false, 30));
+        achievements.put("Bankrupt",
+            new AchievementData("Finish the game with less than $100", false, -10));
+
+        achievements.put("Filthy Rich",
+            new AchievementData("Finish the game with more than $50,000", false, 10));
 
         achievements.put("High Scorer",
             new AchievementData("Score over 80% in a game", false, 30));
 
         achievements.put("Rock Bottom",
-            new AchievementData("Score less than 10% in a game", false, -20));
+            new AchievementData("Score less than 10% in a game", false, 5));
 
         achievements.put("Master Builder",
             new AchievementData("Place at least one of each building type", false, 10));
@@ -109,12 +112,11 @@ public class Achievements {
     public void checkScoreAchievements() {
 
         if (GameState.gameOver == true) {
-            double satisfactionScore = GameState.satisfaction;
 
-            if (satisfactionScore >= 80.0) {
+            if (GameState.satisfaction >= 80.0) {
                 completeAchievement("High Scorer");
             }
-            if (satisfactionScore < 10.0) {
+            if (GameState.satisfaction < 10.0) {
                 completeAchievement("Rock Bottom");
             }
         }
@@ -122,8 +124,12 @@ public class Achievements {
 
     //Check balance related achievements. Add if game over
     public void checkMoneyBalance() {
-        if (GameState.balance == 0) {
-            completeAchievement("Perfect Balance");
+
+        if (GameState.balance < 100) {
+            completeAchievement("Bankrupt");
+        }
+        if (GameState.balance > 50_000) {
+            completeAchievement("Filthy Rich");
         }
     }
 
