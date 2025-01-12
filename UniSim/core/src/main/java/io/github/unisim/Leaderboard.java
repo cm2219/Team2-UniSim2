@@ -88,7 +88,16 @@ public class Leaderboard {
     // Save leaderboard to a CSV file
     public void toCsvFile() {
         File file = new File("leaderboard.csv");
+        toCsvFileInternal("leaderboard.csv", file);
+    }
 
+    // mostly for testing
+    public void toCsvFile(String fileName) {
+        File file = new File(fileName);
+        toCsvFileInternal(fileName, file);
+    }
+
+    private void toCsvFileInternal(String fileName, File file) {
         try {
             // Delete existing file
             if (file.exists()) {
@@ -109,7 +118,7 @@ public class Leaderboard {
                 }
             }
 
-            System.out.println("Leaderboard successfully saved to leaderboard.csv.");
+            System.out.println("Leaderboard successfully saved to " + fileName);
 
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the file: " + e.getMessage());
@@ -134,7 +143,7 @@ public class Leaderboard {
 
         for (var entry : sortedScores.entrySet()){
          formattedScores.add(rank + ". " + entry.getValue() + " - " + entry.getKey());
-        rank++;   
+        rank++;
         }
         return formattedScores;
     }
@@ -142,13 +151,13 @@ public class Leaderboard {
      * // Main method for testing
      * public static void main(String[] args) {
      * Leaderboard leaderboard = new Leaderboard();
-     * 
+     *
      * // Load scores from a CSV file
      * leaderboard.loadFromCsvFile("leaderboard.csv");
-     * 
+     *
      * // Display the leaderboard after loading
      * // leaderboard.displayLeaderboard();
-     * 
+     *
      * // Update leaderboard with new scores
      * // leaderboard.updateScores(1000, "A");
      * // leaderboard.updateScores(150, "Bob");
@@ -157,7 +166,7 @@ public class Leaderboard {
      * leaderboard.updateScores(2250, "D");
      * leaderboard.updateScores(4000, "E");
      * leaderboard.updateScores(4000, "F");
-     * 
+     *
      * // Save the updated leaderboard to a CSV file
      * leaderboard.toCsvFile();
      * }
