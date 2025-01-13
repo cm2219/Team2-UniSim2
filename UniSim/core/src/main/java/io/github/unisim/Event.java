@@ -3,11 +3,11 @@
 
 package io.github.unisim;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
+import java.io.*;
 import java.util.Random;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.BufferedReader;
 
 /**
  * Generates data to be displayed at each new event.
@@ -60,14 +60,16 @@ public class Event {
             Random rand = new Random();
             int randInt = rand.nextInt(10);
 
-            File file = new File("assets/randomEvents.csv");
+            System.out.println(Gdx.files.internal("randomEvents.csv").file());
+            System.out.println(Gdx.files.internal("randomEvents.csv").exists());
+            FileHandle file = Gdx.files.internal("randomEvents.csv");
 
             if (!file.exists()) {
                 System.out.println("CSV file not found: randomEvents.csv");
                 return;
             }
 
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(file.read()))) {
                 String line;
 
                 // Read each line from the file
